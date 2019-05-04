@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.utils;
+package protocolsupportresourcesgenerator.utils;
 
 import java.text.MessageFormat;
 import java.util.List;

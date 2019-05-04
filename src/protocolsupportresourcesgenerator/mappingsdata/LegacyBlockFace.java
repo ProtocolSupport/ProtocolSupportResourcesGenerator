@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.mappingsdata;
+package protocolsupportresourcesgenerator.mappingsdata;
 
 import org.bukkit.block.BlockFace;
 

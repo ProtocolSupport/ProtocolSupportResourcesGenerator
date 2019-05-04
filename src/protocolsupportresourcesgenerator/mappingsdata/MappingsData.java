@@ -1,6 +1,6 @@
-package protocolsupportmappingsgenerator.mappingsdata;
+package protocolsupportresourcesgenerator.mappingsdata;
 
-import protocolsupportmappingsgenerator.version.ProtocolVersion;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class MappingsData {
 

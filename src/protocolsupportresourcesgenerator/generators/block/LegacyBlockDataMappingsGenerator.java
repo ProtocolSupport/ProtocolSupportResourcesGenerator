@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.generators.block;
+package protocolsupportresourcesgenerator.generators.block;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -53,15 +53,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
-import protocolsupportmappingsgenerator.mappingsdata.FlatteningBlockData;
-import protocolsupportmappingsgenerator.mappingsdata.PreFlatteningBlockIdData;
-import protocolsupportmappingsgenerator.utils.MaterialAPI;
-import protocolsupportmappingsgenerator.utils.MinecraftData;
-import protocolsupportmappingsgenerator.utils.RemappingRegistry.IdRemappingRegistry;
-import protocolsupportmappingsgenerator.utils.RemappingTable.ArrayBasedIdRemappingTable;
-import protocolsupportmappingsgenerator.version.ProtocolType;
-import protocolsupportmappingsgenerator.version.ProtocolVersion;
-import protocolsupportmappingsgenerator.version.ProtocolVersionsHelper;
+import protocolsupportresourcesgenerator.mappingsdata.FlatteningBlockData;
+import protocolsupportresourcesgenerator.mappingsdata.PreFlatteningBlockIdData;
+import protocolsupportresourcesgenerator.utils.MaterialAPI;
+import protocolsupportresourcesgenerator.utils.MinecraftData;
+import protocolsupportresourcesgenerator.utils.RemappingRegistry.IdRemappingRegistry;
+import protocolsupportresourcesgenerator.utils.RemappingTable.ArrayBasedIdRemappingTable;
+import protocolsupportresourcesgenerator.version.ProtocolType;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
+import protocolsupportresourcesgenerator.version.ProtocolVersionsHelper;
 
 public class LegacyBlockDataMappingsGenerator {
 

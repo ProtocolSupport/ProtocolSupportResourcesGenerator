@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.mappingsdata;
+package protocolsupportresourcesgenerator.mappingsdata;
 
 import java.util.Arrays;
 
@@ -11,10 +11,10 @@ import org.bukkit.block.data.Rotatable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import protocolsupportmappingsgenerator.utils.JsonUtils;
-import protocolsupportmappingsgenerator.utils.MaterialAPI;
-import protocolsupportmappingsgenerator.utils.MinecraftData;
-import protocolsupportmappingsgenerator.utils.ResourceUtils;
+import protocolsupportresourcesgenerator.utils.JsonUtils;
+import protocolsupportresourcesgenerator.utils.MaterialAPI;
+import protocolsupportresourcesgenerator.utils.MinecraftData;
+import protocolsupportresourcesgenerator.utils.ResourceUtils;
 
 @SuppressWarnings("deprecation")
 public class PreFlatteningBlockIdData {

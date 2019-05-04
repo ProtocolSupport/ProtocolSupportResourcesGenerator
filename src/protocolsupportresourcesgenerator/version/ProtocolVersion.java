@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.version;
+package protocolsupportresourcesgenerator.version;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang.Validate;
 
-import protocolsupportmappingsgenerator.utils.Utils;
+import protocolsupportresourcesgenerator.utils.Utils;
 
 public enum ProtocolVersion {
 

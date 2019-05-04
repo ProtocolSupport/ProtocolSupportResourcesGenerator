@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.utils;
+package protocolsupportresourcesgenerator.utils;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

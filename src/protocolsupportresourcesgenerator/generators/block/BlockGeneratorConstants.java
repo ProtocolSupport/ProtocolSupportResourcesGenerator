@@ -1,8 +1,8 @@
-package protocolsupportmappingsgenerator.generators.block;
+package protocolsupportresourcesgenerator.generators.block;
 
 import java.io.File;
 
-import protocolsupportmappingsgenerator.EntryPoint;
+import protocolsupportresourcesgenerator.EntryPoint;
 
 public class BlockGeneratorConstants {
 

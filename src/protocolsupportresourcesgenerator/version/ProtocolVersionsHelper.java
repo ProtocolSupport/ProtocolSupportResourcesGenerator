@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.version;
+package protocolsupportresourcesgenerator.version;
 
 public class ProtocolVersionsHelper {
 

@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.mappingsdata;
+package protocolsupportresourcesgenerator.mappingsdata;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -10,13 +10,13 @@ import org.bukkit.Bukkit;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import protocolsupportmappingsgenerator.utils.JsonUtils;
-import protocolsupportmappingsgenerator.utils.MaterialAPI;
-import protocolsupportmappingsgenerator.utils.MinecraftData;
-import protocolsupportmappingsgenerator.utils.RemappingRegistry;
-import protocolsupportmappingsgenerator.utils.RemappingTable;
-import protocolsupportmappingsgenerator.utils.ResourceUtils;
-import protocolsupportmappingsgenerator.version.ProtocolVersion;
+import protocolsupportresourcesgenerator.utils.JsonUtils;
+import protocolsupportresourcesgenerator.utils.MaterialAPI;
+import protocolsupportresourcesgenerator.utils.MinecraftData;
+import protocolsupportresourcesgenerator.utils.RemappingRegistry;
+import protocolsupportresourcesgenerator.utils.RemappingTable;
+import protocolsupportresourcesgenerator.utils.ResourceUtils;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class FlatteningBlockData {
 

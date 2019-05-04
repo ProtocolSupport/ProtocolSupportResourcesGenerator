@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.utils;
+package protocolsupportresourcesgenerator.utils;
 
 import java.util.EnumMap;
 import java.util.HashMap;

@@ -1,10 +1,10 @@
-package protocolsupportmappingsgenerator;
+package protocolsupportresourcesgenerator;
 
 import java.io.File;
 
 import org.bukkit.craftbukkit.Main;
 
-import protocolsupportmappingsgenerator.generators.block.LegacyBlockDataMappingsGenerator;
+import protocolsupportresourcesgenerator.generators.block.LegacyBlockDataMappingsGenerator;
 
 public class EntryPoint {
 

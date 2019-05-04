@@ -1,4 +1,4 @@
-package protocolsupportmappingsgenerator.utils;
+package protocolsupportresourcesgenerator.utils;
 
 import com.google.gson.Gson;
 
