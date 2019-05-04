@@ -1,5 +1,8 @@
-package protocolsupportresourcesgenerator.mappingsdata;
+package protocolsupportresourcesgenerator.generators.block;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map.Entry;
@@ -7,9 +10,12 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
+import protocolsupportresourcesgenerator.mappingsdata.MappingsData;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
 import protocolsupportresourcesgenerator.utils.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.MinecraftData;
@@ -18,7 +24,7 @@ import protocolsupportresourcesgenerator.utils.RemappingTable;
 import protocolsupportresourcesgenerator.utils.ResourceUtils;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
-public class FlatteningBlockData {
+public class FlatteningBlockDataMappingsGenerator {
 
 	public static final RemappingRegistry<FlatteningBlockDataTable> REGISTRY = new RemappingRegistry<FlatteningBlockDataTable>() {
 		@Override
@@ -59,7 +65,7 @@ public class FlatteningBlockData {
 	}
 
 	static {
-		Arrays.stream(ProtocolVersion.getAllSupported()).forEach(FlatteningBlockData::load);
+		Arrays.stream(ProtocolVersion.getAllSupported()).forEach(FlatteningBlockDataMappingsGenerator::load);
 	}
 
 	public static class FlatteningBlockDataTable extends RemappingTable {
@@ -84,6 +90,29 @@ public class FlatteningBlockData {
 		}
 		public int getBlockId() {
 			return blockId;
+		}
+	}
+
+	public static void writeMappings() {
+		JsonObject rootObject = new JsonObject();
+		for (ProtocolVersion version : ProtocolVersion.getAllSupported()) {
+			FlatteningBlockDataTable table = REGISTRY.getTable(version);
+			JsonObject versionObject = new JsonObject();
+			for (int originalId = 0; originalId < MinecraftData.BLOCKDATA_COUNT; originalId++) {
+				FlatteningBlockDataEntry remappedId = table.getRemap(originalId);
+				if (remappedId != null) {
+					JsonObject entryObject = new JsonObject();
+					entryObject.addProperty("bdId", remappedId.getBlockDataId());
+					entryObject.addProperty("bId", remappedId.getBlockId());
+					versionObject.add(String.valueOf(originalId), entryObject);
+				}
+			}
+			rootObject.add(version.toString(), versionObject);
+		}
+		try (FileWriter writer = new FileWriter(new File(BlockGeneratorConstants.targetFolder, "flatteningblockdata.json"))) {
+			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
+		} catch (JsonIOException | IOException e) {
+			e.printStackTrace();
 		}
 	}
 

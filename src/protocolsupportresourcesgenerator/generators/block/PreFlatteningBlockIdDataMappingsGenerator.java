@@ -1,5 +1,8 @@
-package protocolsupportresourcesgenerator.mappingsdata;
+package protocolsupportresourcesgenerator.generators.block;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
@@ -8,16 +11,20 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
+import protocolsupportresourcesgenerator.mappingsdata.LegacyBlockFace;
+import protocolsupportresourcesgenerator.mappingsdata.MappingsData;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
 import protocolsupportresourcesgenerator.utils.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.MinecraftData;
 import protocolsupportresourcesgenerator.utils.ResourceUtils;
 
 @SuppressWarnings("deprecation")
-public class PreFlatteningBlockIdData {
+public class PreFlatteningBlockIdDataMappingsGenerator {
 
 	protected static final int[] toLegacyId = new int[MinecraftData.BLOCKDATA_COUNT];
 
@@ -99,42 +106,20 @@ public class PreFlatteningBlockIdData {
 		return toLegacyId[modernId];
 	}
 
-	/**
-	 * Extracts block id from legacy combined id (returned by {@link PreFlatteningBlockIdData#getCombinedId(int)})
-	 * @param legacyId legacy combined block id
-	 * @return block id
-	 */
-	public static int getIdFromCombinedId(int legacyId) {
-		return legacyId >> 4;
-	}
 
-	/**
-	 * Extracts data from legacy combined id (returned by {@link PreFlatteningBlockIdData#getCombinedId(int)})
-	 * @param legacyId legacy combined block id
-	 * @return data
-	 */
-	public static int getDataFromCombinedId(int legacyId) {
-		return legacyId & 0xF;
-	}
-
-	/**
-	 * Converts legacy combined block id (returned by {@link PreFlatteningBlockIdData#getCombinedId(int)}) to another combined id <br>
-	 * This combined id is encoded as follows: ((block id) | (data << 12)) <br>
-	 * @param legacyId legacy combined block id
-	 * @return combined id in another form
-	 */
-	public static int convertCombinedIdToM12(int legacyId) {
-		return (getIdFromCombinedId(legacyId)) | (getDataFromCombinedId(legacyId) << 12);
-	}
-
-	/**
-	 * Converts legacy combined block id (returned by {@link PreFlatteningBlockIdData#getCombinedId(int)}) to another combined id <br>
-	 * This combined id is encoded as follows: ((block id) | (data << 16)) <br>
-	 * @param legacyId legacy combined block id
-	 * @return combined id in another form
-	 */
-	public static int convertCombinedIdToM16(int legacyId) {
-		return (getIdFromCombinedId(legacyId)) | (getDataFromCombinedId(legacyId) << 16);
+	public static void writeMappings() {
+		JsonObject rootObject = new JsonObject();
+		for (int originalId = 0; originalId < MinecraftData.BLOCKDATA_COUNT; originalId++) {
+			int legacyId = getCombinedId(originalId);
+			if (legacyId != -1) {
+				rootObject.addProperty(String.valueOf(originalId), legacyId);
+			}
+		}
+		try (FileWriter writer = new FileWriter(new File(BlockGeneratorConstants.targetFolder, "preflatteningblockdataid.json"))) {
+			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
+		} catch (JsonIOException | IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

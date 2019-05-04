@@ -53,8 +53,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.mappingsdata.FlatteningBlockData;
-import protocolsupportresourcesgenerator.mappingsdata.PreFlatteningBlockIdData;
 import protocolsupportresourcesgenerator.utils.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.MinecraftData;
 import protocolsupportresourcesgenerator.utils.RemappingRegistry.IdRemappingRegistry;
@@ -1010,9 +1008,9 @@ public class LegacyBlockDataMappingsGenerator {
 
 				IntFunction<Boolean> blockDataExistsFunc = null;
 				if (version.isAfterOrEq(ProtocolVersion.MINECRAFT_1_13)) {
-					blockDataExistsFunc = id -> FlatteningBlockData.REGISTRY.getTable(version).getRemap(id) != null;
+					blockDataExistsFunc = id -> FlatteningBlockDataMappingsGenerator.REGISTRY.getTable(version).getRemap(id) != null;
 				} else if (version == ProtocolVersion.MINECRAFT_1_12) {
-					blockDataExistsFunc = id -> PreFlatteningBlockIdData.getCombinedId(id) != -1;
+					blockDataExistsFunc = id -> PreFlatteningBlockIdDataMappingsGenerator.getCombinedId(id) != -1;
 				}
 
 				if (blockDataExistsFunc != null) {
