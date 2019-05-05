@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.generators.block;
+package protocolsupportresourcesgenerator.generators.mappings.block;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +16,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.generators.GeneratorConstants;
+import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
@@ -134,7 +134,7 @@ public class PreFlatteningBlockIdDataMappingsGenerator {
 				rootObject.addProperty(String.valueOf(originalId), legacyId);
 			}
 		}
-		try (FileWriter writer = new FileWriter(new File(GeneratorConstants.targetFolder, "preflatteningblockdataid.json"))) {
+		try (FileWriter writer = new FileWriter(new File(MappingsGeneratorConstants.targetFolder, "preflatteningblockdataid.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
 		}
 	}

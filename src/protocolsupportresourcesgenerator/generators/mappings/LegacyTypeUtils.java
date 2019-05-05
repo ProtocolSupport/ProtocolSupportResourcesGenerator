@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.generators;
+package protocolsupportresourcesgenerator.generators.mappings;
 
 import java.util.function.BiConsumer;
 import java.util.function.IntFunction;

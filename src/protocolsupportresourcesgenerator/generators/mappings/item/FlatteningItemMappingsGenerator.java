@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.generators.item;
+package protocolsupportresourcesgenerator.generators.mappings.item;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +12,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.generators.GeneratorConstants;
+import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
@@ -63,7 +63,7 @@ public class FlatteningItemMappingsGenerator {
 			}
 			rootObject.add(version.toString(), versionObject);
 		}
-		try (FileWriter writer = new FileWriter(new File(GeneratorConstants.targetFolder, "flatteningitem.json"))) {
+		try (FileWriter writer = new FileWriter(new File(MappingsGeneratorConstants.targetFolder, "flatteningitem.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
 		}
 	}

@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.generators.block;
+package protocolsupportresourcesgenerator.generators.mappings.block;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,8 +52,8 @@ import org.bukkit.block.data.type.WallSign;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.generators.GeneratorConstants;
-import protocolsupportresourcesgenerator.generators.LegacyTypeUtils;
+import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
+import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
@@ -1097,7 +1097,7 @@ public class LegacyBlockDataMappingsGenerator {
 			}
 			rootObject.add(version.toString(), versionObject);
 		}
-		try (FileWriter writer = new FileWriter(new File(GeneratorConstants.targetFolder, "legacyblockdata.json"))) {
+		try (FileWriter writer = new FileWriter(new File(MappingsGeneratorConstants.targetFolder, "legacyblockdata.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
 		}
 	}

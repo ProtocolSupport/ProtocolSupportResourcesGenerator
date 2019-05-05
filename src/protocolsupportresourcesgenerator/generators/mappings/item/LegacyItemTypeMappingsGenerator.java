@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.generators.item;
+package protocolsupportresourcesgenerator.generators.mappings.item;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -13,9 +13,9 @@ import org.bukkit.Material;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.generators.GeneratorConstants;
-import protocolsupportresourcesgenerator.generators.LegacyTypeUtils;
-import protocolsupportresourcesgenerator.generators.block.LegacyBlockDataMappingsGenerator;
+import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
+import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
+import protocolsupportresourcesgenerator.generators.mappings.block.LegacyBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
@@ -223,7 +223,7 @@ public class LegacyItemTypeMappingsGenerator {
 			}
 			rootObject.add(version.toString(), versionObject);
 		}
-		try (FileWriter writer = new FileWriter(new File(GeneratorConstants.targetFolder, "legacyitemtype.json"))) {
+		try (FileWriter writer = new FileWriter(new File(MappingsGeneratorConstants.targetFolder, "legacyitemtype.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
 		}
 	}
