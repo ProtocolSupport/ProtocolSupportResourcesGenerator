@@ -11,6 +11,7 @@ import protocolsupportresourcesgenerator.generators.mappings.item.FlatteningItem
 import protocolsupportresourcesgenerator.generators.mappings.item.LegacyItemTypeMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.PreFlatteningItemIdMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.minecraftdata.BlockDataGenerator;
+import protocolsupportresourcesgenerator.generators.minecraftdata.SoundDataGenerator;
 
 public class EntryPoint {
 
@@ -33,6 +34,7 @@ public class EntryPoint {
 			LegacyItemTypeMappingsGenerator.writeMappings();
 
 			BlockDataGenerator.writeData();
+			SoundDataGenerator.writeData();
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
