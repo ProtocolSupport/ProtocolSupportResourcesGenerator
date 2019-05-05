@@ -1,14 +1,11 @@
-package protocolsupportresourcesgenerator.generators.block;
+package protocolsupportresourcesgenerator.generators;
 
 import java.io.File;
 
 import protocolsupportresourcesgenerator.EntryPoint;
 
-public class BlockGeneratorConstants {
+public class GeneratorConstants {
 
 	public static final File targetFolder = new File(EntryPoint.targetFolder, "mappings");
-	static {
-		targetFolder.mkdirs();
-	}
 
 }

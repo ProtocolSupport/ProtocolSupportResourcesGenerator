@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.utils;
+package protocolsupportresourcesgenerator.utils.registry;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -30,34 +30,10 @@ public class RemappingTable {
 
 		@Override
 		public int getRemap(int id) {
-			if ((id >= 0) && (id < table.length)) {
-				return table[id];
-			} else {
-				return id;
-			}
+			return table[id];
 		}
 
 	}
-
-//	public static class HashMapBasedIdRemappingTable extends IdRemappingTable {
-//
-//		protected final Int2IntOpenHashMap table = new Int2IntOpenHashMap();
-//		{
-//			table.defaultReturnValue(-1);
-//		}
-//
-//		@Override
-//		public void setRemap(int from, int to) {
-//			table.put(from, to);
-//		}
-//
-//		@Override
-//		public int getRemap(int id) {
-//			int r = table.get(id);
-//			return r != table.defaultReturnValue() ? r : id;
-//		}
-//
-//	}
 
 	public static class EnumRemappingTable<T extends Enum<T>> extends RemappingTable {
 

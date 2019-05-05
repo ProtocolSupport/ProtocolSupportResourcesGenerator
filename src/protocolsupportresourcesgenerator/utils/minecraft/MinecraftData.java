@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.utils;
+package protocolsupportresourcesgenerator.utils.minecraft;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

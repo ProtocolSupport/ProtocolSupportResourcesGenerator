@@ -12,16 +12,15 @@ import org.bukkit.Bukkit;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.mappingsdata.MappingsData;
+import protocolsupportresourcesgenerator.generators.GeneratorConstants;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
-import protocolsupportresourcesgenerator.utils.MaterialAPI;
-import protocolsupportresourcesgenerator.utils.MinecraftData;
-import protocolsupportresourcesgenerator.utils.RemappingRegistry;
-import protocolsupportresourcesgenerator.utils.RemappingTable;
-import protocolsupportresourcesgenerator.utils.ResourceUtils;
+import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
+import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
+import protocolsupportresourcesgenerator.utils.minecraft.ResourceUtils;
+import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry;
+import protocolsupportresourcesgenerator.utils.registry.RemappingTable;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class FlatteningBlockDataMappingsGenerator {
@@ -34,9 +33,9 @@ public class FlatteningBlockDataMappingsGenerator {
 	};
 
 	protected static void load(ProtocolVersion version) {
-		JsonObject blockdataidJson = ResourceUtils.getAsJson(MappingsData.getFlatteningResoucePath(version, "blockdataid.json"));
+		JsonObject blockdataidJson = ResourceUtils.getAsJson(ResourceUtils.getFlatteningResoucePath(version, "blockdataid.json"));
 		if (blockdataidJson != null) {
-			JsonObject blockidJson = ResourceUtils.getAsJson(MappingsData.getFlatteningResoucePath(version, "blockid.json"));
+			JsonObject blockidJson = ResourceUtils.getAsJson(ResourceUtils.getFlatteningResoucePath(version, "blockid.json"));
 
 			FlatteningBlockDataTable table = REGISTRY.getTable(version);
 			for (Entry<String, JsonElement> entry : blockdataidJson.entrySet()) {
@@ -93,7 +92,7 @@ public class FlatteningBlockDataMappingsGenerator {
 		}
 	}
 
-	public static void writeMappings() {
+	public static void writeMappings() throws IOException {
 		JsonObject rootObject = new JsonObject();
 		for (ProtocolVersion version : ProtocolVersion.getAllSupported()) {
 			FlatteningBlockDataTable table = REGISTRY.getTable(version);
@@ -109,10 +108,8 @@ public class FlatteningBlockDataMappingsGenerator {
 			}
 			rootObject.add(version.toString(), versionObject);
 		}
-		try (FileWriter writer = new FileWriter(new File(BlockGeneratorConstants.targetFolder, "flatteningblockdata.json"))) {
+		try (FileWriter writer = new FileWriter(new File(GeneratorConstants.targetFolder, "flatteningblockdata.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
-		} catch (JsonIOException | IOException e) {
-			e.printStackTrace();
 		}
 	}
 

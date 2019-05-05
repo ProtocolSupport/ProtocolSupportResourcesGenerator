@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.utils;
+package protocolsupportresourcesgenerator.utils.minecraft;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -14,11 +14,6 @@ import net.minecraft.server.v1_14_R1.IRegistry;
 
 public class MaterialAPI {
 
-	/**
-	 * Retunrs all possible block data states for this material
-	 * @param material block material
-	 * @return all possible block data states
-	 */
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public static <T extends BlockData> List<T> getBlockDataList(Material material) {
 		if (material.isLegacy()) {
@@ -33,30 +28,14 @@ public class MaterialAPI {
 			.collect(Collectors.toList());
 	}
 
-	/**
-	 * Returns blockdata network id
-	 * @param blockdata blockdata
-	 * @return blockdata network id
-	 */
 	public static int getBlockDataNetworkId(BlockData blockdata) {
 		return Block.getCombinedId(((CraftBlockData) blockdata).getState());
 	}
 
-	/**
-	 * Returns blockdata by network id <br>
-	 * Returns null if no blockdata exists for this network id
-	 * @param id blockdata network id
-	 * @return blockdata
-	 */
 	public static BlockData getBlockDataByNetworkId(int id) {
 		return CraftBlockData.fromData(Block.getByCombinedId(id));
 	}
 
-	/**
-	 * Returns block material network id
-	 * @param material block material
-	 * @return network id
-	 */
 	@SuppressWarnings("deprecation")
 	public static int getBlockNetworkId(Material material) {
 		if (material.isLegacy()) {
@@ -68,14 +47,23 @@ public class MaterialAPI {
 		return IRegistry.BLOCK.a(CraftMagicNumbers.getBlock(material));
 	}
 
-	/**
-	 * Returns block material by network id <br>
-	 * Returns null if no block exists for this network id
-	 * @param id block network id
-	 * @return block material
-	 */
 	public static Material getBlockByNetworkId(int id) {
 		return CraftMagicNumbers.getMaterial(IRegistry.BLOCK.fromId(id));
+	}
+
+	@SuppressWarnings("deprecation")
+	public static int getItemNetworkId(Material material) {
+		if (material.isLegacy()) {
+			throw new IllegalArgumentException(MessageFormat.format("Material {0} is legacy", material));
+		}
+		if (!material.isItem()) {
+			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not an item", material));
+		}
+		return IRegistry.ITEM.a(CraftMagicNumbers.getItem(material));
+	}
+
+	public static Material getItemByNetworkId(int id) {
+		return CraftMagicNumbers.getMaterial(IRegistry.ITEM.fromId(id));
 	}
 
 }

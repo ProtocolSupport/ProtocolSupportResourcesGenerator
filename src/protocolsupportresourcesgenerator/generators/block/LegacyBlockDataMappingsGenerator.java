@@ -50,13 +50,14 @@ import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.WallSign;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.utils.MaterialAPI;
-import protocolsupportresourcesgenerator.utils.MinecraftData;
-import protocolsupportresourcesgenerator.utils.RemappingRegistry.IdRemappingRegistry;
-import protocolsupportresourcesgenerator.utils.RemappingTable.ArrayBasedIdRemappingTable;
+import protocolsupportresourcesgenerator.generators.GeneratorConstants;
+import protocolsupportresourcesgenerator.generators.LegacyTypeUtils;
+import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
+import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
+import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
+import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
 import protocolsupportresourcesgenerator.version.ProtocolType;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 import protocolsupportresourcesgenerator.version.ProtocolVersionsHelper;
@@ -992,19 +993,8 @@ public class LegacyBlockDataMappingsGenerator {
 
 			for (ProtocolVersion version : ProtocolVersion.getAllBeforeE(ProtocolVersion.getLatest(ProtocolType.PC).previous())) {
 				ArrayBasedIdRemappingTable table = getTable(version);
-				for (int originalId = 0; originalId < MinecraftData.BLOCKDATA_COUNT; originalId++) {
-					int originalRemap = table.getRemap(originalId);
-					if (originalRemap != originalId) {
-						int currentRemap = originalRemap;
-						int nextRemap = -1;
-						while ((nextRemap = table.getRemap(currentRemap)) != currentRemap) {
-							currentRemap = nextRemap;
-						}
-						if (currentRemap != originalRemap) {
-							table.setRemap(originalId, currentRemap);
-						}
-					}
-				}
+
+				LegacyTypeUtils.chainRemapTable(table, MinecraftData.BLOCKDATA_COUNT);
 
 				IntFunction<Boolean> blockDataExistsFunc = null;
 				if (version.isAfterOrEq(ProtocolVersion.MINECRAFT_1_13)) {
@@ -1014,23 +1004,21 @@ public class LegacyBlockDataMappingsGenerator {
 				}
 
 				if (blockDataExistsFunc != null) {
-					for (int originalId = 0; originalId < MinecraftData.BLOCKDATA_COUNT; originalId++) {
-						int remappedId = table.getRemap(originalId);
-						if ((originalId != remappedId) && blockDataExistsFunc.apply(originalId)) {
-							System.err.println(MessageFormat.format(
-								"[Warning] Version {0}: blockdata {1} is remapped, while it exists",
-								version,
-								MaterialAPI.getBlockDataByNetworkId(originalId).getAsString()
-							));
-						}
-						if (!blockDataExistsFunc.apply(remappedId)) {
-							System.err.println(MessageFormat.format(
-								"[Error] Version {0}: blockdata {1} is remapped to blockdata which doesn''t exist",
-								version,
-								MaterialAPI.getBlockDataByNetworkId(remappedId).getAsString()
-							));
-						}
-					}
+					LegacyTypeUtils.checkTable(
+						table, MinecraftData.BLOCKDATA_COUNT, blockDataExistsFunc,
+						(originalId, remappedId) -> System.err.println(MessageFormat.format(
+							"[Warning] Version {0}: blockdata {1} is mapped to {2}, but it exists at this version",
+							version,
+							MaterialAPI.getBlockDataByNetworkId(originalId).getAsString(),
+							MaterialAPI.getBlockDataByNetworkId(remappedId).getAsString()
+						)),
+						(originalId, remappedId) -> System.err.println(MessageFormat.format(
+							"[Error] Version {0}: blockdata {1} is mapped to {2}, which doesn''t exist at this version",
+							version,
+							MaterialAPI.getBlockDataByNetworkId(originalId).getAsString(),
+							MaterialAPI.getBlockDataByNetworkId(remappedId).getAsString()
+						))
+					);
 				}
 			}
 		}
@@ -1076,15 +1064,13 @@ public class LegacyBlockDataMappingsGenerator {
 				for (ProtocolVersion version : versions) {
 					int remappedId = getTable(version).getRemap(fromId);
 					if (remappedId != fromId) {
-						System.err.println(
-							MessageFormat.format(
-								"[Warning] Version {0}: blockdata {1} remap is already set to {2} (Now set to {3})",
-								version,
-								MaterialAPI.getBlockDataByNetworkId(fromId).getAsString(),
-								MaterialAPI.getBlockDataByNetworkId(remappedId).getAsString(),
-								MaterialAPI.getBlockDataByNetworkId(toId).getAsString()
-							)
-						);
+						System.err.println(MessageFormat.format(
+							"[Warning] Version {0}: blockdata {1} remap is already set to {2} (Now set to {3})",
+							version,
+							MaterialAPI.getBlockDataByNetworkId(fromId).getAsString(),
+							MaterialAPI.getBlockDataByNetworkId(remappedId).getAsString(),
+							MaterialAPI.getBlockDataByNetworkId(toId).getAsString()
+						));
 					}
 				}
 			}
@@ -1097,7 +1083,8 @@ public class LegacyBlockDataMappingsGenerator {
 		}
 	}
 
-	public static void writeMappings() {
+
+	public static void writeMappings() throws IOException {
 		JsonObject rootObject = new JsonObject();
 		for (ProtocolVersion version : ProtocolVersion.getAllSupported()) {
 			ArrayBasedIdRemappingTable table = REGISTRY.getTable(version);
@@ -1110,10 +1097,8 @@ public class LegacyBlockDataMappingsGenerator {
 			}
 			rootObject.add(version.toString(), versionObject);
 		}
-		try (FileWriter writer = new FileWriter(new File(BlockGeneratorConstants.targetFolder, "legacyblockdata.json"))) {
+		try (FileWriter writer = new FileWriter(new File(GeneratorConstants.targetFolder, "legacyblockdata.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
-		} catch (JsonIOException | IOException e) {
-			e.printStackTrace();
 		}
 	}
 

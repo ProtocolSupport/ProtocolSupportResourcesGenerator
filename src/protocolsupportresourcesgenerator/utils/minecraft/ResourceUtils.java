@@ -1,4 +1,4 @@
-package protocolsupportresourcesgenerator.utils;
+package protocolsupportresourcesgenerator.utils.minecraft;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -10,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import protocolsupportresourcesgenerator.utils.Utils;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class ResourceUtils {
 
@@ -36,6 +39,14 @@ public class ResourceUtils {
 	public static Iterable<JsonElement> getAsIterableJson(String name) {
 		BufferedReader reader = getAsBufferedReader(name);
 		return reader != null ? Utils.GSON.fromJson(reader, JsonArray.class) : null;
+	}
+
+	public static String getFlatteningResoucePath(ProtocolVersion version, String name) {
+		return ResourceUtils.getMappingsPath("flattening/" + version.toString().toLowerCase() + "/" + name);
+	}
+
+	public static String getMappingsPath(String name) {
+		return "mappings/" + name;
 	}
 
 }

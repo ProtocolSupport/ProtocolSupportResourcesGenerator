@@ -1,11 +1,11 @@
-package protocolsupportresourcesgenerator.utils;
+package protocolsupportresourcesgenerator.utils.registry;
 
 import java.text.MessageFormat;
 import java.util.EnumMap;
 
-import protocolsupportresourcesgenerator.utils.RemappingTable.EnumRemappingTable;
-import protocolsupportresourcesgenerator.utils.RemappingTable.GenericRemappingTable;
-import protocolsupportresourcesgenerator.utils.RemappingTable.IdRemappingTable;
+import protocolsupportresourcesgenerator.utils.registry.RemappingTable.EnumRemappingTable;
+import protocolsupportresourcesgenerator.utils.registry.RemappingTable.GenericRemappingTable;
+import protocolsupportresourcesgenerator.utils.registry.RemappingTable.IdRemappingTable;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public abstract class RemappingRegistry<T extends RemappingTable> {
