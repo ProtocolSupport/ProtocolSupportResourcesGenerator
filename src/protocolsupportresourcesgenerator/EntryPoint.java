@@ -33,7 +33,7 @@ public class EntryPoint {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			System.exit(0);
+			Runtime.getRuntime().halt(0);
 		}
 	}
 
