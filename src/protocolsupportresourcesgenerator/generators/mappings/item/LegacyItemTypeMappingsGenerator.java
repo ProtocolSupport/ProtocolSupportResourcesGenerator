@@ -55,6 +55,32 @@ public class LegacyItemTypeMappingsGenerator {
 			registerRemapEntry(Material.CHEST, Material.CHEST, ProtocolVersionsHelper.ALL_PC);
 			registerRemapEntry(Material.TRAPPED_CHEST, Material.TRAPPED_CHEST, ProtocolVersionsHelper.ALL_PC);
 
+			registerRemapEntry(Material.WHITE_DYE, Material.BONE_MEAL, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.BROWN_DYE, Material.COCOA_BEANS, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.BLACK_DYE, Material.INK_SAC, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.BLUE_DYE, Material.LAPIS_LAZULI, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.CAT_SPAWN_EGG, Material.OCELOT_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.FOX_SPAWN_EGG, Material.OCELOT_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.PANDA_SPAWN_EGG, Material.POLAR_BEAR_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.PILLAGER_SPAWN_EGG, Material.WITCH_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.RAVAGER_SPAWN_EGG, Material.CAVE_SPIDER_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.TRADER_LLAMA_SPAWN_EGG, Material.LLAMA_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.WANDERING_TRADER_SPAWN_EGG, Material.VILLAGER_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.LEATHER_HORSE_ARMOR, Material.IRON_HORSE_ARMOR, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(
+				Arrays.asList(
+					Material.FLOWER_BANNER_PATTERN,
+					Material.CREEPER_BANNER_PATTERN,
+					Material.SKULL_BANNER_PATTERN,
+					Material.MOJANG_BANNER_PATTERN,
+					Material.GLOBE_BANNER_PATTERN
+				),
+				Material.PAPER,
+				ProtocolVersionsHelper.BEFORE_1_14
+			);
+			registerRemapEntry(Material.CROSSBOW, Material.BOW, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.SWEET_BERRIES, Material.POTATO, ProtocolVersionsHelper.BEFORE_1_14);
+			registerRemapEntry(Material.SUSPICIOUS_STEW, Material.MUSHROOM_STEW, ProtocolVersionsHelper.BEFORE_1_14);
 
 			registerRemapEntry(Arrays.asList(Material.ACACIA_WOOD, Material.STRIPPED_ACACIA_WOOD), Material.ACACIA_LOG, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Arrays.asList(Material.DARK_OAK_WOOD, Material.STRIPPED_DARK_OAK_WOOD), Material.DARK_OAK_LOG, ProtocolVersionsHelper.BEFORE_1_13);
@@ -68,6 +94,14 @@ public class LegacyItemTypeMappingsGenerator {
 				Material.WATER_BUCKET,
 				ProtocolVersionsHelper.BEFORE_1_13
 			);
+			registerRemapEntry(
+				Arrays.asList(Material.COD_SPAWN_EGG, Material.PUFFERFISH_SPAWN_EGG, Material.SALMON_SPAWN_EGG, Material.TROPICAL_FISH_SPAWN_EGG),
+				Material.BAT_SPAWN_EGG,
+				ProtocolVersionsHelper.BEFORE_1_13
+			);
+			registerRemapEntry(Material.DOLPHIN_SPAWN_EGG, Material.SQUID_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_13);
+			registerRemapEntry(Material.DROWNED_SPAWN_EGG, Material.ZOMBIE_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_13);
+			registerRemapEntry(Material.PHANTOM_SPAWN_EGG, Material.BLAZE_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Material.HEART_OF_THE_SEA, Material.LIGHT_BLUE_DYE, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Material.NAUTILUS_SHELL, Material.LIGHT_GRAY_DYE, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Material.PHANTOM_MEMBRANE, Material.GRAY_DYE, ProtocolVersionsHelper.BEFORE_1_13);

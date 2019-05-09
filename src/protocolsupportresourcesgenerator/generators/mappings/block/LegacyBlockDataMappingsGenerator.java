@@ -706,7 +706,10 @@ public class LegacyBlockDataMappingsGenerator {
 				Material.FLOWER_POT.createBlockData(),
 				ProtocolVersionsHelper.BEFORE_1_13
 			);
-
+			this.registerRemapEntryForAllStates(Material.SMOOTH_RED_SANDSTONE, Material.CUT_RED_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
+			this.registerRemapEntryForAllStates(Material.SMOOTH_SANDSTONE, Material.CUT_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
+			this.registerRemapEntryForAllStates(Material.SMOOTH_STONE, Material.STONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
+			this.registerRemapEntryForAllStates(Material.SMOOTH_QUARTZ, Material.QUARTZ_BLOCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
 
 			this.registerRemapEntryForAllStates(
 				Arrays.asList(
@@ -862,7 +865,6 @@ public class LegacyBlockDataMappingsGenerator {
 			this.registerRemapEntryForAllStates(Material.RED_SANDSTONE, Material.SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
 			this.registerRemapEntryForAllStates(Material.CHISELED_RED_SANDSTONE, Material.CHISELED_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
 			this.registerRemapEntryForAllStates(Material.CUT_RED_SANDSTONE, Material.CUT_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.SMOOTH_RED_SANDSTONE, Material.SMOOTH_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
 			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerRemapEntryForAllStates(
 				Material.RED_SANDSTONE_SLAB,
 				o -> toPre13SlabState(o, (Slab) Material.SANDSTONE_SLAB.createBlockData()),
