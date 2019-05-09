@@ -13,8 +13,8 @@ import org.bukkit.Material;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
+import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.generators.mappings.block.LegacyBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;

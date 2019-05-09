@@ -7,6 +7,7 @@ import org.bukkit.craftbukkit.Main;
 import protocolsupportresourcesgenerator.generators.mappings.block.FlatteningBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.LegacyBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.PreFlatteningBlockIdDataMappingsGenerator;
+import protocolsupportresourcesgenerator.generators.mappings.entity.FlatteningEntityLivingDataGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.FlatteningItemMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.LegacyItemTypeMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.PreFlatteningItemIdMappingsGenerator;
@@ -33,6 +34,8 @@ public class EntryPoint {
 			PreFlatteningItemIdMappingsGenerator.writeMappings();
 			FlatteningItemMappingsGenerator.writeMappings();
 			LegacyItemTypeMappingsGenerator.writeMappings();
+
+			FlatteningEntityLivingDataGenerator.writeMappings();
 
 			BlockDataGenerator.writeData();
 			SoundDataGenerator.writeData();

@@ -52,8 +52,8 @@ import org.bukkit.block.data.type.WallSign;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
+import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
