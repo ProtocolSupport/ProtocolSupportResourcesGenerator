@@ -46,3 +46,5 @@ logs/
 /world_nether/
 /world_the_end/
 /eula.txt
+/paper.yml
+/version_history.json

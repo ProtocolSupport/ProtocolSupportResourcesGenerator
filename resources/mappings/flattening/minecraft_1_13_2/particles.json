@@ -1,0 +1,152 @@
+{
+  "ambient_entity_effect": {
+    "protocol_id": 0
+  },
+  "angry_villager": {
+    "protocol_id": 1
+  },
+  "barrier": {
+    "protocol_id": 2
+  },
+  "block": {
+    "protocol_id": 3
+  },
+  "bubble": {
+    "protocol_id": 4
+  },
+  "cloud": {
+    "protocol_id": 5
+  },
+  "crit": {
+    "protocol_id": 6
+  },
+  "damage_indicator": {
+    "protocol_id": 7
+  },
+  "dragon_breath": {
+    "protocol_id": 8
+  },
+  "dripping_lava": {
+    "protocol_id": 9
+  },
+  "dripping_water": {
+    "protocol_id": 10
+  },
+  "dust": {
+    "protocol_id": 11
+  },
+  "effect": {
+    "protocol_id": 12
+  },
+  "elder_guardian": {
+    "protocol_id": 13
+  },
+  "enchanted_hit": {
+    "protocol_id": 14
+  },
+  "enchant": {
+    "protocol_id": 15
+  },
+  "end_rod": {
+    "protocol_id": 16
+  },
+  "entity_effect": {
+    "protocol_id": 17
+  },
+  "explosion_emitter": {
+    "protocol_id": 18
+  },
+  "explosion": {
+    "protocol_id": 19
+  },
+  "falling_dust": {
+    "protocol_id": 20
+  },
+  "firework": {
+    "protocol_id": 21
+  },
+  "fishing": {
+    "protocol_id": 22
+  },
+  "flame": {
+    "protocol_id": 23
+  },
+  "happy_villager": {
+    "protocol_id": 24
+  },
+  "heart": {
+    "protocol_id": 25
+  },
+  "instant_effect": {
+    "protocol_id": 26
+  },
+  "item": {
+    "protocol_id": 27
+  },
+  "item_slime": {
+    "protocol_id": 28
+  },
+  "item_snowball": {
+    "protocol_id": 29
+  },
+  "large_smoke": {
+    "protocol_id": 30
+  },
+  "lava": {
+    "protocol_id": 31
+  },
+  "mycelium": {
+    "protocol_id": 32
+  },
+  "note": {
+    "protocol_id": 33
+  },
+  "poof": {
+    "protocol_id": 34
+  },
+  "portal": {
+    "protocol_id": 35
+  },
+  "rain": {
+    "protocol_id": 36
+  },
+  "smoke": {
+    "protocol_id": 37
+  },
+  "spit": {
+    "protocol_id": 38
+  },
+  "squid_ink": {
+    "protocol_id": 39
+  },
+  "sweep_attack": {
+    "protocol_id": 40
+  },
+  "totem_of_undying": {
+    "protocol_id": 41
+  },
+  "underwater": {
+    "protocol_id": 42
+  },
+  "splash": {
+    "protocol_id": 43
+  },
+  "witch": {
+    "protocol_id": 44
+  },
+  "bubble_pop": {
+    "protocol_id": 45
+  },
+  "current_down": {
+    "protocol_id": 46
+  },
+  "bubble_column_up": {
+    "protocol_id": 47
+  },
+  "nautilus": {
+    "protocol_id": 48
+  },
+  "dolphin": {
+    "protocol_id": 49
+  }
+}
