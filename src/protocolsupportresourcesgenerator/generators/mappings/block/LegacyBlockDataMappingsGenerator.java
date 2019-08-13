@@ -236,8 +236,8 @@ public class LegacyBlockDataMappingsGenerator {
 			this.registerRemapEntryForAllStates(Material.WITHER_ROSE, Material.POPPY.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
 			this.registerRemapEntryForAllStates(Material.BAMBOO, Material.SUGAR_CANE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
 			this.registerRemapEntryForAllStates(Material.POTTED_CORNFLOWER, Material.POTTED_BLUE_ORCHID.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.POTTED_LILY_OF_THE_VALLEY, Material.AZURE_BLUET.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.POTTED_WITHER_ROSE, Material.POPPY.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
+			this.registerRemapEntryForAllStates(Material.POTTED_LILY_OF_THE_VALLEY, Material.POTTED_AZURE_BLUET.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
+			this.registerRemapEntryForAllStates(Material.POTTED_WITHER_ROSE, Material.POTTED_POPPY.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
 			this.registerRemapEntryForAllStates(Material.POTTED_BAMBOO, Material.POTTED_OAK_SAPLING.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
 			this.registerRemapEntryForAllStates(Material.BAMBOO_SAPLING, Material.OAK_SAPLING.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
 			this.registerRemapEntryForAllStates(Material.SWEET_BERRY_BUSH, Material.GRASS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
