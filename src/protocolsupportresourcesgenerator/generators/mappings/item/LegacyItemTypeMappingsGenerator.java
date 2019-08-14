@@ -82,6 +82,10 @@ public class LegacyItemTypeMappingsGenerator {
 			registerRemapEntry(Material.SWEET_BERRIES, Material.POTATO, ProtocolVersionsHelper.BEFORE_1_14);
 			registerRemapEntry(Material.SUSPICIOUS_STEW, Material.MUSHROOM_STEW, ProtocolVersionsHelper.BEFORE_1_14);
 
+			registerRemapEntry(Material.SMOOTH_QUARTZ, Material.QUARTZ_BLOCK, ProtocolVersionsHelper.BEFORE_1_13);
+			registerRemapEntry(Material.SMOOTH_RED_SANDSTONE, Material.CUT_RED_SANDSTONE, ProtocolVersionsHelper.BEFORE_1_13);
+			registerRemapEntry(Material.SMOOTH_SANDSTONE, Material.CUT_SANDSTONE, ProtocolVersionsHelper.BEFORE_1_13);
+			registerRemapEntry(Material.SMOOTH_STONE, Material.STONE, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Arrays.asList(Material.ACACIA_WOOD, Material.STRIPPED_ACACIA_WOOD), Material.ACACIA_LOG, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Arrays.asList(Material.DARK_OAK_WOOD, Material.STRIPPED_DARK_OAK_WOOD), Material.DARK_OAK_LOG, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Arrays.asList(Material.BIRCH_WOOD, Material.STRIPPED_BIRCH_WOOD), Material.BIRCH_LOG, ProtocolVersionsHelper.BEFORE_1_13);
