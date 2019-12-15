@@ -44,6 +44,8 @@ public class ProtocolVersionsHelper {
 
 	public static final ProtocolVersion[] BEFORE_1_14 = ProtocolVersion.getAllBeforeE(ProtocolVersion.MINECRAFT_1_14);
 
+	public static final ProtocolVersion[] BEFORE_1_15 = ProtocolVersion.getAllBeforeE(ProtocolVersion.MINECRAFT_1_15);
+
 	public static final ProtocolVersion[] ALL_PC = ProtocolVersion.getAllBetween(ProtocolVersion.getOldest(ProtocolType.PC), LATEST_PC);
 
 }

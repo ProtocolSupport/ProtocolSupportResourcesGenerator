@@ -1,13 +1,14 @@
 package protocolsupportresourcesgenerator;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.craftbukkit.Main;
 
 import protocolsupportresourcesgenerator.generators.mappings.block.FlatteningBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.LegacyBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.PreFlatteningBlockIdDataMappingsGenerator;
-import protocolsupportresourcesgenerator.generators.mappings.entity.FlatteningEntityLivingDataGenerator;
+import protocolsupportresourcesgenerator.generators.mappings.entity.FlatteningEntityDataGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.FlatteningItemMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.LegacyItemTypeMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.item.PreFlatteningItemIdMappingsGenerator;
@@ -28,6 +29,8 @@ public class EntryPoint {
 			System.setProperty("com.mojang.eula.agree", "true");
 			Main.main(new String[0]);
 
+			Thread.sleep(TimeUnit.SECONDS.toMillis(30));
+
 			PreFlatteningBlockIdDataMappingsGenerator.writeMappings();
 			FlatteningBlockDataMappingsGenerator.writeMappings();
 			LegacyBlockDataMappingsGenerator.writeMappings();
@@ -36,7 +39,7 @@ public class EntryPoint {
 			FlatteningItemMappingsGenerator.writeMappings();
 			LegacyItemTypeMappingsGenerator.writeMappings();
 
-			FlatteningEntityLivingDataGenerator.writeMappings();
+			FlatteningEntityDataGenerator.writeMappings();
 
 			FlatteningParticleMappingsGenerator.writeMappings();
 

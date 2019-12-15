@@ -7,8 +7,8 @@ import java.io.IOException;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_14_R1.IRegistry;
-import net.minecraft.server.v1_14_R1.MobEffectList;
+import net.minecraft.server.v1_15_R1.IRegistry;
+import net.minecraft.server.v1_15_R1.MobEffectList;
 
 public class PotionDataGenerator {
 

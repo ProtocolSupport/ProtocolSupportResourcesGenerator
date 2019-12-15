@@ -6,13 +6,12 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_14_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_14_R1.util.CraftMagicNumbers;
-import org.bukkit.entity.EntityType;
+import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 
-import net.minecraft.server.v1_14_R1.Block;
-import net.minecraft.server.v1_14_R1.EntityTypes;
-import net.minecraft.server.v1_14_R1.IRegistry;
+import net.minecraft.server.v1_15_R1.Block;
+import net.minecraft.server.v1_15_R1.EntityTypes;
+import net.minecraft.server.v1_15_R1.IRegistry;
 
 public class MaterialAPI {
 
@@ -68,9 +67,8 @@ public class MaterialAPI {
 		return CraftMagicNumbers.getMaterial(IRegistry.ITEM.fromId(id));
 	}
 
-	@SuppressWarnings("deprecation")
-	public static int getEntityTypeNetworkId(EntityType type) {
-		return IRegistry.ENTITY_TYPE.a(EntityTypes.a(type.getName()).get());
+	public static int getEntityTypeNetworkId(String name) {
+		return IRegistry.ENTITY_TYPE.a(EntityTypes.a(name).get());
 	}
 
 }

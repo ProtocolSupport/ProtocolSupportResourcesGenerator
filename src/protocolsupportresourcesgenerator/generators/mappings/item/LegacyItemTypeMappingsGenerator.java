@@ -20,7 +20,6 @@ import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
-import protocolsupportresourcesgenerator.version.ProtocolType;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 import protocolsupportresourcesgenerator.version.ProtocolVersionsHelper;
 
@@ -54,6 +53,10 @@ public class LegacyItemTypeMappingsGenerator {
 
 			registerRemapEntry(Material.CHEST, Material.CHEST, ProtocolVersionsHelper.ALL_PC);
 			registerRemapEntry(Material.TRAPPED_CHEST, Material.TRAPPED_CHEST, ProtocolVersionsHelper.ALL_PC);
+
+			registerRemapEntry(Material.HONEYCOMB, Material.HAY_BLOCK, ProtocolVersionsHelper.BEFORE_1_15);
+			registerRemapEntry(Material.HONEY_BOTTLE, Material.MUSHROOM_STEW, ProtocolVersionsHelper.BEFORE_1_15);
+			registerRemapEntry(Material.BEE_SPAWN_EGG, Material.PARROT_SPAWN_EGG, ProtocolVersionsHelper.BEFORE_1_15);
 
 			registerRemapEntry(Material.WHITE_DYE, Material.BONE_MEAL, ProtocolVersionsHelper.BEFORE_1_14);
 			registerRemapEntry(Material.BROWN_DYE, Material.COCOA_BEANS, ProtocolVersionsHelper.BEFORE_1_14);
@@ -177,7 +180,7 @@ public class LegacyItemTypeMappingsGenerator {
 			registerRemapEntry(Material.NETHER_BRICK, Material.CLAY_BALL, ProtocolVersionsHelper.BEFORE_1_5);
 			registerRemapEntry(Material.TRAPPED_CHEST, Material.CHEST, ProtocolVersionsHelper.BEFORE_1_5);
 
-			for (ProtocolVersion version : ProtocolVersion.getAllBeforeE(ProtocolVersion.getLatest(ProtocolType.PC).previous())) {
+			for (ProtocolVersion version : ProtocolVersionsHelper.BEFORE_1_15) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
 				LegacyTypeUtils.chainRemapTable(table, MinecraftData.ITEM_COUNT);

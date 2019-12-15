@@ -23,6 +23,7 @@ import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Bell;
 import org.bukkit.block.data.type.Campfire;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.CommandBlock;
@@ -58,7 +59,6 @@ import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
-import protocolsupportresourcesgenerator.version.ProtocolType;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 import protocolsupportresourcesgenerator.version.ProtocolVersionsHelper;
 
@@ -191,6 +191,24 @@ public class LegacyBlockDataMappingsGenerator {
 
 		public void applyDefaultRemaps() {
 			clear();
+
+			this.registerRemapEntryForAllStates(Material.HONEY_BLOCK, Material.GRASS_PATH.createBlockData(), ProtocolVersionsHelper.BEFORE_1_15);
+			this.registerRemapEntryForAllStates(Material.HONEYCOMB_BLOCK, Material.HAY_BLOCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_15);
+			this.registerRemapEntryForAllStates(
+				Arrays.asList(Material.BEEHIVE, Material.BEE_NEST),
+				Material.JUNGLE_WOOD.createBlockData(),
+				ProtocolVersionsHelper.BEFORE_1_15
+			);
+			this.<Bell>registerRemapEntryForAllStates(
+				Material.BELL,
+				o -> {
+					Bell bell = (Bell) o.getMaterial().createBlockData();
+					bell.setAttachment(o.getAttachment());
+					bell.setFacing(o.getFacing());
+					return bell;
+				},
+				ProtocolVersionsHelper.BEFORE_1_15
+			);
 
 			this.<Directional>registerRemapEntryForAllStates(
 				Material.BARREL,
@@ -990,7 +1008,7 @@ public class LegacyBlockDataMappingsGenerator {
 				ProtocolVersionsHelper.BEFORE_1_5
 			);
 
-			for (ProtocolVersion version : ProtocolVersion.getAllBeforeE(ProtocolVersion.getLatest(ProtocolType.PC).previous())) {
+			for (ProtocolVersion version : ProtocolVersionsHelper.BEFORE_1_15) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
 				LegacyTypeUtils.chainRemapTable(table, MinecraftData.BLOCKDATA_COUNT);
