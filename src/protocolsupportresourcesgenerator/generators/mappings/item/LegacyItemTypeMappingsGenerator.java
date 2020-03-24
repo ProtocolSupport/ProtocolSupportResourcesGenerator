@@ -117,6 +117,23 @@ public class LegacyItemTypeMappingsGenerator {
 			registerRemapEntry(Material.TRIDENT, Material.DIAMOND_HOE, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Material.DEBUG_STICK, Material.STICK, ProtocolVersionsHelper.BEFORE_1_13);
 
+			// Bed items remap (in order to avoid the white bed blockdata remap)
+			registerRemapEntry(Material.ORANGE_BED, Material.ORANGE_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.MAGENTA_BED, Material.MAGENTA_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.LIGHT_BLUE_BED, Material.LIGHT_BLUE_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.YELLOW_BED, Material.YELLOW_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.LIME_BED, Material.LIME_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.PINK_BED, Material.PINK_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.GRAY_BED, Material.GRAY_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.LIGHT_GRAY_BED, Material.LIGHT_GRAY_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.CYAN_BED, Material.CYAN_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.BLUE_BED, Material.BLUE_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.PURPLE_BED, Material.PURPLE_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.GREEN_BED, Material.GREEN_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.BROWN_BED, Material.BROWN_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.RED_BED, Material.RED_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+			registerRemapEntry(Material.BLACK_BED, Material.BLACK_BED, ProtocolVersion.getAllBetween(ProtocolVersion.MINECRAFT_1_12, ProtocolVersion.MINECRAFT_1_12_2));
+
 			registerRemapEntry(Material.KNOWLEDGE_BOOK, Material.BOOK, ProtocolVersionsHelper.BEFORE_1_12);
 			registerRemapEntry(Material.IRON_NUGGET, Material.GOLD_NUGGET, ProtocolVersionsHelper.BEFORE_1_11_1);
 			registerRemapEntry(Material.SHULKER_SHELL, Material.COBBLESTONE, ProtocolVersionsHelper.BEFORE_1_11);

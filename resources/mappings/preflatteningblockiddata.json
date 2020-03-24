@@ -595,62 +595,62 @@
     "legacydata": 0
   },
   {
-    "blockdata": "minecraft:red_bed[facing=south,occupied=false,part=foot]",
+    "blockdata": "minecraft:white_bed[facing=south,occupied=false,part=foot]",
     "legacyid": 26,
     "legacydata": 0
   },
   {
-    "blockdata": "minecraft:red_bed[facing=west,occupied=false,part=foot]",
+    "blockdata": "minecraft:white_bed[facing=west,occupied=false,part=foot]",
     "legacyid": 26,
     "legacydata": 1
   },
   {
-    "blockdata": "minecraft:red_bed[facing=north,occupied=false,part=foot]",
+    "blockdata": "minecraft:white_bed[facing=north,occupied=false,part=foot]",
     "legacyid": 26,
     "legacydata": 2
   },
   {
-    "blockdata": "minecraft:red_bed[facing=east,occupied=false,part=foot]",
+    "blockdata": "minecraft:white_bed[facing=east,occupied=false,part=foot]",
     "legacyid": 26,
     "legacydata": 3
   },
   {
-    "blockdata": "minecraft:red_bed[facing=south,occupied=false,part=head]",
+    "blockdata": "minecraft:white_bed[facing=south,occupied=false,part=head]",
     "legacyid": 26,
     "legacydata": 8
   },
   {
-    "blockdata": "minecraft:red_bed[facing=west,occupied=false,part=head]",
+    "blockdata": "minecraft:white_bed[facing=west,occupied=false,part=head]",
     "legacyid": 26,
     "legacydata": 9
   },
   {
-    "blockdata": "minecraft:red_bed[facing=north,occupied=false,part=head]",
+    "blockdata": "minecraft:white_bed[facing=north,occupied=false,part=head]",
     "legacyid": 26,
     "legacydata": 10
   },
   {
-    "blockdata": "minecraft:red_bed[facing=east,occupied=false,part=head]",
+    "blockdata": "minecraft:white_bed[facing=east,occupied=false,part=head]",
     "legacyid": 26,
     "legacydata": 11
   },
   {
-    "blockdata": "minecraft:red_bed[facing=south,occupied=true,part=head]",
+    "blockdata": "minecraft:white_bed[facing=south,occupied=true,part=head]",
     "legacyid": 26,
     "legacydata": 12
   },
   {
-    "blockdata": "minecraft:red_bed[facing=west,occupied=true,part=head]",
+    "blockdata": "minecraft:white_bed[facing=west,occupied=true,part=head]",
     "legacyid": 26,
     "legacydata": 13
   },
   {
-    "blockdata": "minecraft:red_bed[facing=north,occupied=true,part=head]",
+    "blockdata": "minecraft:white_bed[facing=north,occupied=true,part=head]",
     "legacyid": 26,
     "legacydata": 14
   },
   {
-    "blockdata": "minecraft:red_bed[facing=east,occupied=true,part=head]",
+    "blockdata": "minecraft:white_bed[facing=east,occupied=true,part=head]",
     "legacyid": 26,
     "legacydata": 15
   },

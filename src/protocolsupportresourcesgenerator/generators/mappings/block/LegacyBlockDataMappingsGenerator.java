@@ -518,7 +518,7 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_BED, Material.RED_BED, Material.WHITE_BED, Material.YELLOW_BED
 				),
 				o -> {
-					Bed bed = (Bed) Material.RED_BED.createBlockData();
+					Bed bed = (Bed) Material.WHITE_BED.createBlockData();
 					bed.setFacing(o.getFacing());
 					bed.setPart(o.getPart());
 					return bed;
