@@ -180,6 +180,46 @@ public class LegacyItemTypeMappingsGenerator {
 			registerRemapEntry(Material.NETHER_BRICK, Material.CLAY_BALL, ProtocolVersionsHelper.BEFORE_1_5);
 			registerRemapEntry(Material.TRAPPED_CHEST, Material.CHEST, ProtocolVersionsHelper.BEFORE_1_5);
 
+//		TODO: remap following items for beta 1.7.3
+//		(minecraft:pumpkin_seeds)
+//		(minecraft:melon_seeds)
+//		(minecraft:beef)
+//		(minecraft:cooked_beef)
+//		(minecraft:chicken)
+//		(minecraft:cooked_chicken)
+//		(minecraft:rotten_flesh)
+//		(minecraft:ender_pearl)
+//		(minecraft:blaze_rod)
+//		(minecraft:ghast_tear)
+//		(minecraft:gold_nugget)
+//		(minecraft:nether_wart)
+//		(minecraft:potion)
+//		(minecraft:glass_bottle)
+//		(minecraft:spider_eye)
+//		(minecraft:fermented_spider_eye)
+//		(minecraft:blaze_powder)
+//		(minecraft:magma_cream)
+//		(minecraft:ender_eye)
+//		(minecraft:speckled_melon)
+//		(minecraft:spawn_egg)
+//		(minecraft:experience_bottle)
+//		(minecraft:fire_charge)
+//		(minecraft:writable_book)
+//		(minecraft:written_book)
+//		(minecraft:emerald)
+//		(minecraft:item_frame)
+//		(minecraft:carrot)
+//		(minecraft:potato)
+//		(minecraft:baked_potato)
+//		(minecraft:poisonous_potato)
+//		(minecraft:map)
+//		(minecraft:golden_carrot)
+//		(minecraft:carrot_on_a_stick)
+//		(minecraft:nether_star)
+//		(minecraft:pumpkin_pie)
+//		(minecraft:fireworks)
+//		(minecraft:firework_charge)
+
 			for (ProtocolVersion version : ProtocolVersionsHelper.BEFORE_1_15) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
