@@ -2505,7 +2505,7 @@
     "legacydata": 0
   },
   {
-    "itemkey": "red_bed",
+    "itemkey": "white_bed",
     "legacyid": 355,
     "legacydata": 0
   },
@@ -2573,6 +2573,11 @@
     "itemkey": "green_bed",
     "legacyid": 355,
     "legacydata": 13
+  },
+  {
+    "itemkey": "red_bed",
+    "legacyid": 355,
+    "legacydata": 14
   },
   {
     "itemkey": "black_bed",

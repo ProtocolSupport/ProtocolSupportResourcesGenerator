@@ -117,6 +117,23 @@ public class LegacyItemTypeMappingsGenerator {
 			registerRemapEntry(Material.TRIDENT, Material.DIAMOND_HOE, ProtocolVersionsHelper.BEFORE_1_13);
 			registerRemapEntry(Material.DEBUG_STICK, Material.STICK, ProtocolVersionsHelper.BEFORE_1_13);
 
+			registerRemapEntry(Material.WHITE_BED, Material.WHITE_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.ORANGE_BED, Material.ORANGE_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.MAGENTA_BED, Material.MAGENTA_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.LIGHT_BLUE_BED, Material.LIGHT_BLUE_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.YELLOW_BED, Material.YELLOW_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.LIME_BED, Material.LIME_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.PINK_BED, Material.PINK_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.GRAY_BED, Material.GRAY_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.LIGHT_GRAY_BED, Material.LIGHT_GRAY_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.CYAN_BED, Material.CYAN_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.BLUE_BED, Material.BLUE_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.PURPLE_BED, Material.PURPLE_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.GREEN_BED, Material.GREEN_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.BROWN_BED, Material.BROWN_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.RED_BED, Material.RED_BED, ProtocolVersionsHelper.ALL_1_12);
+			registerRemapEntry(Material.BLACK_BED, Material.BLACK_BED, ProtocolVersionsHelper.ALL_1_12);
+
 			registerRemapEntry(Material.KNOWLEDGE_BOOK, Material.BOOK, ProtocolVersionsHelper.BEFORE_1_12);
 			registerRemapEntry(Material.IRON_NUGGET, Material.GOLD_NUGGET, ProtocolVersionsHelper.BEFORE_1_11_1);
 			registerRemapEntry(Material.SHULKER_SHELL, Material.COBBLESTONE, ProtocolVersionsHelper.BEFORE_1_11);
