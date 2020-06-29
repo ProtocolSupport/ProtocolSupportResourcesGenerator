@@ -614,6 +614,26 @@
     "legacyid": 26,
     "legacydata": 3
   },
+    {
+    "blockdata": "minecraft:red_bed[facing=south,occupied=true,part=foot]",
+    "legacyid": 26,
+    "legacydata": 4
+  },
+  {
+    "blockdata": "minecraft:red_bed[facing=west,occupied=true,part=foot]",
+    "legacyid": 26,
+    "legacydata": 5
+  },
+  {
+    "blockdata": "minecraft:red_bed[facing=north,occupied=true,part=foot]",
+    "legacyid": 26,
+    "legacydata": 6
+  },
+  {
+    "blockdata": "minecraft:red_bed[facing=east,occupied=true,part=foot]",
+    "legacyid": 26,
+    "legacydata": 7
+  },
   {
     "blockdata": "minecraft:red_bed[facing=south,occupied=false,part=head]",
     "legacyid": 26,
@@ -4170,12 +4190,12 @@
     "legacydata": 0
   },
   {
-    "blockdata": "minecraft:cobblestone_wall[east=false,north=false,south=false,up=false,waterlogged=false,west=false]",
+    "blockdata": "minecraft:cobblestone_wall[east=none,north=none,west=none,south=none,up=false,waterlogged=false]",
     "legacyid": 139,
     "legacydata": 0
   },
   {
-    "blockdata": "minecraft:mossy_cobblestone_wall[east=false,north=false,south=false,up=false,waterlogged=false,west=false]",
+    "blockdata": "minecraft:mossy_cobblestone_wall[east=none,north=none,west=none,south=none,up=false,waterlogged=false]",
     "legacyid": 139,
     "legacydata": 1
   },

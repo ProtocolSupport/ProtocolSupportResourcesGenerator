@@ -2,7 +2,7 @@ package protocolsupportresourcesgenerator.generators.mappings;
 
 import java.util.Arrays;
 import java.util.Map.Entry;
-import java.util.function.ToIntFunction;
+import java.util.function.ToIntBiFunction;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,13 +15,13 @@ import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class FlatteningResourceUtils {
 
-	public static void loadMappingToRegistry(String filename, ToIntFunction<String> toIntFunc, IdRemappingRegistry<ArrayBasedIdRemappingTable> registry) {
+	public static void loadMappingToRegistry(String filename, ToIntBiFunction<ProtocolVersion, String> toIntFunc, IdRemappingRegistry<ArrayBasedIdRemappingTable> registry) {
 		Arrays.stream(ProtocolVersion.getAllSupported()).forEach(version -> {
 			JsonObject rootObject = ResourceUtils.getAsJson(ResourceUtils.getFlatteningResoucePath(version, filename));
 			if (rootObject != null) {
 				ArrayBasedIdRemappingTable table = registry.getTable(version);
 				for (Entry<String, JsonElement> entry : rootObject.entrySet()) {
-					table.setRemap(toIntFunc.applyAsInt(entry.getKey()), JsonUtils.getInt(entry.getValue().getAsJsonObject(), "protocol_id"));
+					table.setRemap(toIntFunc.applyAsInt(version, entry.getKey()), JsonUtils.getInt(entry.getValue().getAsJsonObject(), "protocol_id"));
 				}
 			}
 		});

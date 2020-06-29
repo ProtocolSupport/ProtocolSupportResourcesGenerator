@@ -2,18 +2,27 @@ package protocolsupportresourcesgenerator.utils.minecraft;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_16_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_16_R1.util.CraftMagicNumbers;
 
-import net.minecraft.server.v1_15_R1.Block;
-import net.minecraft.server.v1_15_R1.EntityTypes;
-import net.minecraft.server.v1_15_R1.IRegistry;
+import net.minecraft.server.v1_16_R1.Block;
+import net.minecraft.server.v1_16_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.IRegistry;
 
 public class MaterialAPI {
+
+	public static Material matchMaterial(String name) {
+		Material material = Material.matchMaterial(name);
+		if (material == null) {
+			throw new IllegalArgumentException(MessageFormat.format("Material {0} doesn''t exist", name));
+		}
+		return material;
+	}
 
 	@SuppressWarnings({ "deprecation", "unchecked" })
 	public static <T extends BlockData> List<T> getBlockDataList(Material material) {
@@ -68,7 +77,11 @@ public class MaterialAPI {
 	}
 
 	public static int getEntityTypeNetworkId(String name) {
-		return IRegistry.ENTITY_TYPE.a(EntityTypes.a(name).get());
+		Optional<EntityTypes<?>> type = EntityTypes.a(name);
+		if (!type.isPresent()) {
+			throw new IllegalArgumentException(MessageFormat.format("Entity type {0} doesn''t exist", name));
+		}
+		return IRegistry.ENTITY_TYPE.a(type.get());
 	}
 
 }
