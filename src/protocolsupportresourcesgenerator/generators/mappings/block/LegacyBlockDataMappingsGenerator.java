@@ -56,14 +56,12 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.craftbukkit.v1_16_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_16_R2.block.data.CraftBlockData;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_16_R1.BlockBed;
-import net.minecraft.server.v1_16_R1.BlockBell;
-import net.minecraft.server.v1_16_R1.BlockProperties;
+import net.minecraft.server.v1_16_R2.BlockBed;
 import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
@@ -84,24 +82,6 @@ public class LegacyBlockDataMappingsGenerator {
 		}
 
 		protected static final BlockFace[] blockface_nsew = new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
-
-		public boolean isWallUp(Wall wall) {
-			return ((CraftBlockData) wall).getState().get(BlockProperties.G);
-		}
-
-		protected Wall setWallUp(Wall wall, boolean up) {
-			((CraftBlockData) wall).set(BlockProperties.G, up);
-			return wall;
-		}
-
-		public boolean isBellPowered(Bell bell) {
-			return ((CraftBlockData) bell).getState().get(BlockBell.c);
-		}
-
-		public Bell setBellPowered(Bell bell, boolean powered) {
-			((CraftBlockData) bell).set(BlockBell.c, powered);
-			return bell;
-		}
 
 		public Bed setBedOccupied(Bed bed, boolean occupied) {
 			((CraftBlockData) bed).set(BlockBed.OCCUPIED, occupied);
@@ -190,7 +170,7 @@ public class LegacyBlockDataMappingsGenerator {
 				to.setHeight(face, from.getHeight(face) == Wall.Height.NONE ? Wall.Height.NONE : Wall.Height.LOW);
 			}
 			cloneWaterlogged(from, to);
-			setWallUp(to, isWallUp(from));
+			to.setUp(from.isUp());
 			return to;
 		}
 
@@ -266,7 +246,7 @@ public class LegacyBlockDataMappingsGenerator {
 				to.setHeight(face, from.getHeight(face));
 			}
 			cloneWaterlogged(from, to);
-			setWallUp(to, isWallUp(from));
+			to.setUp(from.isUp());
 			return to;
 		}
 
@@ -596,7 +576,7 @@ public class LegacyBlockDataMappingsGenerator {
 					Bell bell = (Bell) o.getMaterial().createBlockData();
 					cloneDirectional(o, bell);
 					bell.setAttachment(o.getAttachment());
-					setBellPowered(bell, false);
+					bell.setPowered(false);
 					return bell;
 				},
 				ProtocolVersionsHelper.DOWN_1_14_4
@@ -609,7 +589,7 @@ public class LegacyBlockDataMappingsGenerator {
 			);
 			this.<Bell>registerSomeStates(
 				Material.BELL,
-				o -> !isBellPowered(o),
+				o -> !o.isPowered(),
 				Material.NOTE_BLOCK.createBlockData(),
 				ProtocolVersionsHelper.DOWN_1_13_2
 			);
@@ -798,7 +778,7 @@ public class LegacyBlockDataMappingsGenerator {
 					for (BlockFace face : blockface_nsew) {
 						wall.setHeight(face, Wall.Height.NONE);
 					}
-					setWallUp(wall, false);
+					wall.setUp(false);
 					wall.setWaterlogged(false);
 				}),
 				ProtocolVersionsHelper.DOWN_1_12_2

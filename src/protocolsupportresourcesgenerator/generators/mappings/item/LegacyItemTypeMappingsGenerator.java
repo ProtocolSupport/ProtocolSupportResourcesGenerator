@@ -54,6 +54,8 @@ public class LegacyItemTypeMappingsGenerator {
 			register(Material.CHEST, Material.CHEST, ProtocolVersionsHelper.ALL_PC);
 			register(Material.TRAPPED_CHEST, Material.TRAPPED_CHEST, ProtocolVersionsHelper.ALL_PC);
 
+			register(Material.PIGLIN_BRUTE_SPAWN_EGG, Material.PIGLIN_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_16_1);
+
 			register(Material.NETHERITE_INGOT, Material.IRON_INGOT, ProtocolVersionsHelper.DOWN_1_15_2);
 			register(Material.NETHERITE_SCRAP, Material.IRON_NUGGET, ProtocolVersionsHelper.DOWN_1_15_2);
 			register(Material.NETHERITE_SWORD, Material.DIAMOND_SWORD, ProtocolVersionsHelper.DOWN_1_15_2);

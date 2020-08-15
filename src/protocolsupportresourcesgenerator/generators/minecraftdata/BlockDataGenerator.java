@@ -9,10 +9,10 @@ import org.bukkit.block.data.BlockData;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_16_R1.Block;
-import net.minecraft.server.v1_16_R1.IBlockData;
-import net.minecraft.server.v1_16_R1.IRegistry;
-import net.minecraft.server.v1_16_R1.SoundEffectType;
+import net.minecraft.server.v1_16_R2.Block;
+import net.minecraft.server.v1_16_R2.IBlockData;
+import net.minecraft.server.v1_16_R2.IRegistry;
+import net.minecraft.server.v1_16_R2.SoundEffectType;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 

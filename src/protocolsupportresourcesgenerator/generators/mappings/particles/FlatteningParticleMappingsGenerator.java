@@ -3,8 +3,8 @@ package protocolsupportresourcesgenerator.generators.mappings.particles;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import net.minecraft.server.v1_16_R1.IRegistry;
-import net.minecraft.server.v1_16_R1.MinecraftKey;
+import net.minecraft.server.v1_16_R2.IRegistry;
+import net.minecraft.server.v1_16_R2.MinecraftKey;
 import protocolsupportresourcesgenerator.generators.mappings.FlatteningResourceUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.Utils;

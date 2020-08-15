@@ -7,8 +7,8 @@ import java.io.IOException;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_16_R1.IRegistry;
-import net.minecraft.server.v1_16_R1.SoundEffect;
+import net.minecraft.server.v1_16_R2.IRegistry;
+import net.minecraft.server.v1_16_R2.SoundEffect;
 
 public class SoundDataGenerator {
 
