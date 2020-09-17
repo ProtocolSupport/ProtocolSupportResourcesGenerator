@@ -14,6 +14,8 @@ import protocolsupportresourcesgenerator.generators.mappings.item.LegacyItemType
 import protocolsupportresourcesgenerator.generators.mappings.item.PreFlatteningItemIdMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.particles.FlatteningParticleMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.minecraftdata.BlockDataGenerator;
+import protocolsupportresourcesgenerator.generators.minecraftdata.EntityDataGenerator;
+import protocolsupportresourcesgenerator.generators.minecraftdata.ItemDataGenerator;
 import protocolsupportresourcesgenerator.generators.minecraftdata.PotionDataGenerator;
 import protocolsupportresourcesgenerator.generators.minecraftdata.SoundDataGenerator;
 
@@ -44,6 +46,8 @@ public class EntryPoint {
 			FlatteningParticleMappingsGenerator.writeMappings();
 
 			BlockDataGenerator.writeData();
+			ItemDataGenerator.writeData();
+			EntityDataGenerator.writeData();
 			SoundDataGenerator.writeData();
 			PotionDataGenerator.writeData();
 		} catch (Throwable t) {
