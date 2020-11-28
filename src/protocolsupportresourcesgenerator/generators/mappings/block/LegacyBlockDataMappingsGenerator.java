@@ -56,12 +56,12 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.craftbukkit.v1_16_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_16_R2.BlockBed;
+import net.minecraft.server.v1_16_R3.BlockBed;
 import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
