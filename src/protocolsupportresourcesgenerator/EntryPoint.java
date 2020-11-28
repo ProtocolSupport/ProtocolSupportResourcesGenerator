@@ -3,6 +3,7 @@ package protocolsupportresourcesgenerator;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.Main;
 
 import protocolsupportresourcesgenerator.generators.mappings.block.FlatteningBlockDataMappingsGenerator;
@@ -53,7 +54,7 @@ public class EntryPoint {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		} finally {
-			Runtime.getRuntime().halt(0);
+			Bukkit.shutdown();
 		}
 	}
 
