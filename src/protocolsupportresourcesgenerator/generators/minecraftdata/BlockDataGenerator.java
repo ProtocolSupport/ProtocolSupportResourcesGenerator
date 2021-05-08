@@ -36,9 +36,9 @@ public class BlockDataGenerator {
 
 				JsonObject soundsObject = new JsonObject();
 				SoundEffectType sound = nmsBlockData.getBlock().getStepSound(nmsBlockData);
-				soundsObject.addProperty("break", IRegistry.SOUND_EVENT.a(sound.e()));
-				soundsObject.addProperty("volume", sound.a());
-				soundsObject.addProperty("pitch", sound.b());
+				soundsObject.addProperty("break", IRegistry.SOUND_EVENT.a(sound.getBreakSound()));
+				soundsObject.addProperty("volume", sound.getVolume());
+				soundsObject.addProperty("pitch", sound.getPitch());
 
 				blockdataObject.add("sounds", soundsObject);
 
