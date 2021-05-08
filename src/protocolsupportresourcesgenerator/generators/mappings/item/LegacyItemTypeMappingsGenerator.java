@@ -214,7 +214,7 @@ public class LegacyItemTypeMappingsGenerator {
 			register(Material.HOPPER_MINECART, Material.MINECART, ProtocolVersionsHelper.DOWN_1_4_7);
 			register(Material.NETHER_BRICK, Material.CLAY_BALL, ProtocolVersionsHelper.DOWN_1_4_7);
 
-			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_14_4) {
+			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_15_2) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
 				LegacyTypeUtils.chainRemapTable(table, MinecraftData.ITEM_COUNT);

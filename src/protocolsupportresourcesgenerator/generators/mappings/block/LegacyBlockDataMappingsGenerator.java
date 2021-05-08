@@ -1371,7 +1371,7 @@ public class LegacyBlockDataMappingsGenerator {
 				ProtocolVersionsHelper.DOWN_1_4_7
 			);
 
-			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_14_4) {
+			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_15_2) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
 				LegacyTypeUtils.chainRemapTable(table, MinecraftData.BLOCKDATA_COUNT);
