@@ -30,12 +30,10 @@ import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bell;
 import org.bukkit.block.data.type.Campfire;
-import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.CommandBlock;
 import org.bukkit.block.data.type.Comparator;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Door.Hinge;
-import org.bukkit.block.data.type.EnderChest;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.block.data.type.Gate;
@@ -901,23 +899,13 @@ public class LegacyBlockDataMappingsGenerator {
 				ProtocolVersionsHelper.DOWN_1_12_2
 			);
 			this.<Directional>registerAllStates(
-				Arrays.asList(Material.LADDER, Material.ENDER_CHEST, Material.OAK_WALL_SIGN),
+				Arrays.asList(Material.LADDER, Material.ENDER_CHEST, Material.CHEST, Material.TRAPPED_CHEST, Material.OAK_WALL_SIGN),
 				o -> cloneDirectional(o, (Directional) o.getMaterial().createBlockData()),
 				ProtocolVersionsHelper.DOWN_1_12_2
 			);
 			this.<Rotatable>registerAllStates(
 				Material.OAK_SIGN,
 				o -> cloneRotatable(o, (Rotatable) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.DOWN_1_12_2
-			);
-			this.<Chest>registerAllStates(
-				Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST),
-				o -> {
-					EnderChest enderChest = (EnderChest) Material.ENDER_CHEST.createBlockData();
-					enderChest.setWaterlogged(false);
-					enderChest.setFacing(o.getFacing());
-					return enderChest;
-				},
 				ProtocolVersionsHelper.DOWN_1_12_2
 			);
 			this.<PistonHead>registerAllStates(
@@ -1374,7 +1362,7 @@ public class LegacyBlockDataMappingsGenerator {
 			));
 			this.withIgnoringDuplicateRemaps(() -> this.<Directional>registerAllStates(
 				Material.TRAPPED_CHEST,
-				o -> cloneDirectional(o, (Directional) Material.ENDER_CHEST.createBlockData()),
+				o -> cloneDirectional(o, (Directional) Material.CHEST.createBlockData()),
 				ProtocolVersionsHelper.DOWN_1_4_7
 			));
 			this.<Directional>registerAllStates(
