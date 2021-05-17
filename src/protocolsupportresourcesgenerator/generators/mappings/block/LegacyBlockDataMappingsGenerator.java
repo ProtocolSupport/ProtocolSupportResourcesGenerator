@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -505,8 +506,12 @@ public class LegacyBlockDataMappingsGenerator {
 			);
 			this.registerAllStates(Material.SOUL_FIRE, Material.FIRE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
 			this.<Lantern>registerAllStates(
-				Material.SOUL_LANTERN,
-				o -> Material.LANTERN.createBlockData(to -> ((Lantern) to).setHanging(o.isHanging())),
+				Arrays.asList(Material.SOUL_LANTERN, Material.LANTERN),
+				o -> {
+					Lantern to = (Lantern) Material.LANTERN.createBlockData();
+					to.setHanging(o.isHanging());
+					return to;
+				},
 				ProtocolVersionsHelper.DOWN_1_15_2
 			);
 			this.registerAllStates(Material.SOUL_SOIL, Material.PODZOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
@@ -617,7 +622,12 @@ public class LegacyBlockDataMappingsGenerator {
 				ProtocolVersionsHelper.DOWN_1_13_2
 			);
 			this.withIgnoringDuplicateRemaps(() -> this.registerAllStates(Material.JIGSAW, Material.BEDROCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2));
-			this.registerAllStates(Material.LANTERN, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.<Lantern>registerSomeStates(
+				Material.LANTERN,
+				o -> !o.isWaterlogged(),
+				Material.GLOWSTONE.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_13_2
+			);
 			this.registerAllStates(Material.LECTERN, Material.BOOKSHELF.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
 			this.<Scaffolding>registerAllStates(
 				Material.SCAFFOLDING,
@@ -739,7 +749,7 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.ACACIA_FENCE, Material.DARK_OAK_FENCE, Material.BIRCH_FENCE,
 					Material.JUNGLE_FENCE, Material.SPRUCE_FENCE, Material.OAK_FENCE,
 					Material.NETHER_BRICK_FENCE, Material.IRON_BARS,
-					Material.CHORUS_PLANT, Material.MUSHROOM_STEM, Material.BROWN_MUSHROOM_BLOCK, Material.RED_MUSHROOM_BLOCK, Material.GLASS_PANE,
+					Material.CHORUS_PLANT, Material.GLASS_PANE,
 					Material.BLACK_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE, Material.BROWN_STAINED_GLASS_PANE, Material.CYAN_STAINED_GLASS_PANE,
 					Material.GRAY_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.LIGHT_GRAY_STAINED_GLASS_PANE,
 					Material.LIME_STAINED_GLASS_PANE, Material.MAGENTA_STAINED_GLASS_PANE, Material.ORANGE_STAINED_GLASS_PANE, Material.PINK_STAINED_GLASS_PANE,
@@ -747,6 +757,37 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.GRASS_BLOCK, Material.MYCELIUM, Material.PODZOL
 				),
 				o -> o.getMaterial().createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_12_2
+			);
+			this.<MultipleFacing>registerAllStates(
+				Material.MUSHROOM_STEM,
+				o -> {
+					Set<BlockFace> faces = o.getFaces();
+					boolean sidedaces = faces.containsAll(Arrays.asList(blockface_nsew));
+					MultipleFacing to = (MultipleFacing) o.getMaterial().createBlockData();
+					if (!sidedaces) {
+						for (BlockFace face : blockface_nsew) {
+							to.setFace(face, false);
+						}
+					}
+					if (!sidedaces || !faces.contains(BlockFace.UP) || !faces.contains(BlockFace.DOWN)) {
+						to.setFace(BlockFace.UP, false);
+						to.setFace(BlockFace.DOWN, false);
+					}
+					return to;
+				},
+				ProtocolVersionsHelper.DOWN_1_12_2
+			);
+			this.<MultipleFacing>registerSomeStates(
+				Arrays.asList(Material.BROWN_MUSHROOM_BLOCK, Material.RED_MUSHROOM_BLOCK),
+				o -> !PreFlatteningBlockIdDataMappingsGenerator.exists(MaterialAPI.getBlockDataNetworkId(o)),
+				o -> {
+					MultipleFacing to = (MultipleFacing) o.getMaterial().createBlockData();
+					for (BlockFace face : to.getAllowedFaces()) {
+						to.setFace(face, false);
+					}
+					return to;
+				},
 				ProtocolVersionsHelper.DOWN_1_12_2
 			);
 			this.withIgnoringDuplicateRemaps(() -> {
@@ -1380,7 +1421,7 @@ public class LegacyBlockDataMappingsGenerator {
 				if (version.isAfterOrEq(ProtocolVersion.MINECRAFT_1_13)) {
 					blockDataExistsFunc = id -> FlatteningBlockDataMappingsGenerator.REGISTRY.getTable(version).getRemap(id) != null;
 				} else if (version == ProtocolVersion.MINECRAFT_1_12) {
-					blockDataExistsFunc = id -> PreFlatteningBlockIdDataMappingsGenerator.getCombinedId(id) != -1;
+					blockDataExistsFunc = id -> PreFlatteningBlockIdDataMappingsGenerator.exists(id);
 				}
 
 				if (blockDataExistsFunc != null) {

@@ -125,6 +125,10 @@ public class PreFlatteningBlockIdDataMappingsGenerator {
 		return toLegacyId[modernId];
 	}
 
+	public static boolean exists(int modernId) {
+		return getCombinedId(modernId) != -1;
+	}
+
 
 	public static void writeMappings() throws IOException {
 		JsonObject rootObject = new JsonObject();
