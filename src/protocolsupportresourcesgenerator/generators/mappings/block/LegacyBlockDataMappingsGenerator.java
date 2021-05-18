@@ -54,6 +54,7 @@ import org.bukkit.block.data.type.Switch;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Wall;
+import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 
@@ -1410,6 +1411,130 @@ public class LegacyBlockDataMappingsGenerator {
 				Arrays.asList(Material.DROPPER, Material.HOPPER),
 				o -> cloneDirectional(o, (Directional) Material.FURNACE.createBlockData()),
 				ProtocolVersionsHelper.DOWN_1_4_7
+			);
+      
+			this.registerRemapEntryForAllStates(Material.INFESTED_STONE, Material.STONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.INFESTED_COBBLESTONE, Material.COBBLESTONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.INFESTED_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.INFESTED_MOSSY_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.INFESTED_CRACKED_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.INFESTED_CHISELED_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.MOSSY_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.CRACKED_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.CHISELED_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.NETHER_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.NETHER_WART_BLOCK, Material.NETHERRACK.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.BROWN_MUSHROOM_BLOCK, Material.COBBLESTONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.RED_MUSHROOM_BLOCK, Material.COBBLESTONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.IRON_BARS, Material.IRON_BLOCK.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.GLASS_PANE, Material.GLASS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.MELON, Material.PUMPKIN.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.<Ageable>registerRemapEntryForAllStates(
+				Arrays.asList(Material.PUMPKIN_STEM, Material.MELON_STEM, Material.CARROTS, Material.POTATOES, Material.COCOA, Material.NETHER_WART),
+				o -> cloneAgeable(o, (Ageable) Material.WHEAT.createBlockData()),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(Material.VINE, Material.SUGAR_CANE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(
+				Arrays.asList(
+					Material.ACACIA_FENCE_GATE, Material.BIRCH_FENCE_GATE, Material.DARK_OAK_FENCE_GATE,
+					Material.JUNGLE_FENCE_GATE, Material.OAK_FENCE_GATE, Material.SPRUCE_FENCE_GATE,
+					Material.NETHER_BRICK_FENCE
+				),
+				Material.OAK_FENCE.createBlockData(),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.<Stairs>registerRemapEntryForAllStates(
+				Arrays.asList(
+					Material.SANDSTONE_STAIRS, Material.RED_SANDSTONE_STAIRS, Material.STONE_BRICK_STAIRS, Material.STONE_BRICK_STAIRS,
+					Material.PRISMARINE_BRICK_STAIRS, Material.PRISMARINE_STAIRS, Material.DARK_PRISMARINE_STAIRS, Material.NETHER_BRICK_STAIRS
+				),
+				o -> toPre13StairsState(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.<Stairs>registerRemapEntryForAllStates(
+				Arrays.asList(Material.SPRUCE_STAIRS, Material.BIRCH_STAIRS, Material.JUNGLE_STAIRS),
+				o -> toPre13StairsState(o, (Stairs) Material.OAK_STAIRS.createBlockData()),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(Material.MYCELIUM, Material.GRASS_BLOCK.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.LILY_PAD, Material.OAK_PRESSURE_PLATE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(
+				Material.END_PORTAL,
+				Material.NETHER_PORTAL.createBlockData(),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(
+				Arrays.asList(Material.END_STONE, Material.END_PORTAL_FRAME),
+				Material.SANDSTONE.createBlockData(),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(
+				Material.DRAGON_EGG,
+				Material.OBSIDIAN.createBlockData(),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(Material.REDSTONE_LAMP, Material.TORCH.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.<Slab>registerRemapEntryForAllStates(
+				Arrays.asList(
+					Material.ACACIA_SLAB, Material.DARK_OAK_SLAB, Material.BIRCH_SLAB,
+					Material.JUNGLE_SLAB, Material.OAK_SLAB, Material.SPRUCE_SLAB
+				),
+				o -> toPre13SlabState(o, (Slab) Material.PETRIFIED_OAK_SLAB.createBlockData()),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(Material.EMERALD_ORE, Material.DIAMOND_ORE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.EMERALD_BLOCK, Material.DIAMOND_BLOCK.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.<TripwireHook>registerRemapEntryForAllStates(
+				Material.TRIPWIRE_HOOK,
+				o -> {
+					Switch lever = (Switch) Material.LEVER.createBlockData();
+					cloneDirectional(o, lever);
+					clonePowerable(o, lever);
+					return lever;
+				},
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(Material.TRIPWIRE, (RedstoneWire) Material.REDSTONE_WIRE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.COMMAND_BLOCK, Material.BEDROCK.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.COBBLESTONE_WALL, Material.COBBLESTONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.FLOWER_POT, Material.DANDELION.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.<Switch>registerRemapEntryForAllStates(
+				Material.OAK_BUTTON,
+				o -> toPre13ButtonState(o, (Switch) Material.LEVER.createBlockData(), true),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(
+				Arrays.asList(
+					Material.CREEPER_HEAD, Material.CREEPER_WALL_HEAD,
+					Material.ZOMBIE_HEAD, Material.ZOMBIE_WALL_HEAD,
+					Material.SKELETON_SKULL, Material.SKELETON_WALL_SKULL,
+					Material.WITHER_SKELETON_SKULL, Material.WITHER_SKELETON_WALL_SKULL,
+					Material.PLAYER_HEAD, Material.PLAYER_WALL_HEAD,
+					Material.DRAGON_HEAD, Material.DRAGON_WALL_HEAD
+				),
+				Material.JACK_O_LANTERN.createBlockData(),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+			this.registerRemapEntryForAllStates(Material.BEACON, Material.DIAMOND_BLOCK.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(Material.ENCHANTING_TABLE, Material.OBSIDIAN.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
+			this.registerRemapEntryForAllStates(
+				Arrays.asList(Material.BREWING_STAND, Material.CAULDRON, Material.ANVIL),
+				Material.COBBLESTONE.createBlockData(),
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
+			);
+
+			this.<Directional>registerRemapEntryForAllStates(
+				Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST, Material.ENDER_CHEST),
+				o -> {
+					Chest chest = (Chest) Material.CHEST.createBlockData();
+					chest.setWaterlogged(false);
+					chest.setFacing(o.getFacing());
+					chest.setType(Chest.Type.SINGLE);
+					return chest;
+				},
+				ProtocolVersion.MINECRAFT_BETA_1_7_3
 			);
 
 			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_15_2) {
