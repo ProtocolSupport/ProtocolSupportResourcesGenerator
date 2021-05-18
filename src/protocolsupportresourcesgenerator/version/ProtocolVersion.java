@@ -44,10 +44,10 @@ public enum ProtocolVersion {
 	MINECRAFT_1_6_1(73, new OrderId(ProtocolType.PC, 5), "1.6.1"),
 	MINECRAFT_1_5_2(61, new OrderId(ProtocolType.PC, 4), "1.5.2"),
 	MINECRAFT_1_5_1(60, new OrderId(ProtocolType.PC, 3), "1.5.1"),
-  MINECRAFT_1_4_7(51, new OrderId(ProtocolType.PC, 2), "1.4.7"),
-  MINECRAFT_BETA_1_7_3(14, new OrderId(ProtocolType.PC, 1), "1.7.3-beta"),
-  MINECRAFT_LEGACY(-1, new OrderId(ProtocolType.PC, 0)),
-  UNKNOWN(-1, new OrderId(ProtocolType.UNKNOWN, 0));
+	MINECRAFT_1_4_7(51, new OrderId(ProtocolType.PC, 2), "1.4.7"),
+	MINECRAFT_BETA_1_7_3(14, new OrderId(ProtocolType.PC, 1), "1.7.3-beta"),
+	MINECRAFT_LEGACY(-1, new OrderId(ProtocolType.PC, 0)),
+	UNKNOWN(-1, new OrderId(ProtocolType.UNKNOWN, 0));
 
 	private final int id;
 	private final OrderId orderId;
