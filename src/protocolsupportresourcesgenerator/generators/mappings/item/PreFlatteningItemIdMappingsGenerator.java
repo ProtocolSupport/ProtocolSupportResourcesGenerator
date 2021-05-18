@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.bukkit.Material;
-
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -22,7 +20,7 @@ public class PreFlatteningItemIdMappingsGenerator {
 	protected static final int[] toLegacyId = new int[MinecraftData.ITEM_COUNT];
 
 	protected static void register(String modernKey, int legacyMainId, int legacyData) {
-		toLegacyId[MaterialAPI.getItemNetworkId(Material.matchMaterial(modernKey))] = ((legacyMainId << 16) | legacyData);
+		toLegacyId[MaterialAPI.getItemNetworkId(MaterialAPI.matchMaterial(modernKey))] = ((legacyMainId << 16) | legacyData);
 	}
 
 	static {

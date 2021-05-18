@@ -7,17 +7,17 @@ import java.io.IOException;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import net.minecraft.server.v1_16_R3.EntityTypes;
 import net.minecraft.server.v1_16_R3.IRegistry;
-import net.minecraft.server.v1_16_R3.SoundEffect;
 
-public class SoundDataGenerator {
+public class EntityDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (SoundEffect soundeffect : IRegistry.SOUND_EVENT) {
-			rootObject.addProperty(String.valueOf(IRegistry.SOUND_EVENT.a(soundeffect)), IRegistry.SOUND_EVENT.getKey(soundeffect).getKey());
+		for (EntityTypes<?> type : IRegistry.ENTITY_TYPE) {
+			rootObject.addProperty(IRegistry.ENTITY_TYPE.getKey(type).getKey(), IRegistry.ENTITY_TYPE.a(type));
 		}
-		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "sounds.json"))) {
+		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "entity.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
 		}
 	}
