@@ -3,8 +3,8 @@ package protocolsupportresourcesgenerator.generators.mappings.particles;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import net.minecraft.server.v1_15_R1.IRegistry;
-import net.minecraft.server.v1_15_R1.MinecraftKey;
+import net.minecraft.server.v1_16_R3.IRegistry;
+import net.minecraft.server.v1_16_R3.MinecraftKey;
 import protocolsupportresourcesgenerator.generators.mappings.FlatteningResourceUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.Utils;
@@ -28,7 +28,7 @@ public class FlatteningParticleMappingsGenerator {
 	};
 
 	static {
-		FlatteningResourceUtils.loadMappingToRegistry("particles.json", name -> IRegistry.PARTICLE_TYPE.a(IRegistry.PARTICLE_TYPE.get(MinecraftKey.a(name))), REGISTRY);
+		FlatteningResourceUtils.loadMappingToRegistry("particles.json", (version, name) -> IRegistry.PARTICLE_TYPE.a(IRegistry.PARTICLE_TYPE.get(MinecraftKey.a(name))), REGISTRY);
 	}
 
 	public static void writeMappings() throws IOException {

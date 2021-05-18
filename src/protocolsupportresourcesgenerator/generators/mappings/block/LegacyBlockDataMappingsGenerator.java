@@ -6,34 +6,40 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Predicate;
 
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.FaceAttachable.AttachedFace;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.block.data.MultipleFacing;
+import org.bukkit.block.data.Openable;
 import org.bukkit.block.data.Orientable;
 import org.bukkit.block.data.Powerable;
 import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bell;
 import org.bukkit.block.data.type.Campfire;
-import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.CommandBlock;
 import org.bukkit.block.data.type.Comparator;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.block.data.type.Door.Hinge;
-import org.bukkit.block.data.type.EnderChest;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.Jigsaw;
+import org.bukkit.block.data.type.Lantern;
 import org.bukkit.block.data.type.NoteBlock;
 import org.bukkit.block.data.type.Observer;
 import org.bukkit.block.data.type.PistonHead;
@@ -45,15 +51,17 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.block.data.type.Stairs.Shape;
 import org.bukkit.block.data.type.Switch;
-import org.bukkit.block.data.type.Switch.Face;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.block.data.type.Tripwire;
+import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import net.minecraft.server.v1_16_R3.BlockBed;
 import protocolsupportresourcesgenerator.generators.mappings.LegacyTypeUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
@@ -73,7 +81,14 @@ public class LegacyBlockDataMappingsGenerator {
 			applyDefaultRemaps();
 		}
 
-		protected Gate toPre13GateState(Gate from, Gate to) {
+		protected static final BlockFace[] blockface_nsew = new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST};
+
+		public Bed setBedOccupied(Bed bed, boolean occupied) {
+			((CraftBlockData) bed).set(BlockBed.OCCUPIED, occupied);
+			return bed;
+		}
+
+		protected Gate toPreFlatteningGate(Gate from, Gate to) {
 			clonePowerable(from, to);
 			to.setInWall(false);
 			to.setFacing(from.getFacing());
@@ -81,10 +96,10 @@ public class LegacyBlockDataMappingsGenerator {
 			return to;
 		}
 
-		protected Switch toPre13ButtonState(Switch from, Switch to, boolean hasWest) {
+		protected Switch toPreFlatteningSwitch(Switch from, Switch to, boolean hasWest) {
 			clonePowerable(from, to);
-			to.setFace(from.getFace());
-			if ((from.getFace() == Face.CEILING) || (from.getFace() == Face.FLOOR)) {
+			to.setAttachedFace(from.getAttachedFace());
+			if ((from.getAttachedFace() == AttachedFace.CEILING) || (from.getAttachedFace() == AttachedFace.FLOOR)) {
 				if (hasWest) {
 					switch (from.getFacing()) {
 						case NORTH:
@@ -110,7 +125,7 @@ public class LegacyBlockDataMappingsGenerator {
 			return to;
 		}
 
-		protected Door toPre13DoorState(Door from, Door to) {
+		protected Door toPreFlatteningDoor(Door from, Door to) {
 			if (from.getHalf() == Half.TOP) {
 				to.setHalf(Half.TOP);
 				to.setHinge(from.getHinge());
@@ -127,13 +142,13 @@ public class LegacyBlockDataMappingsGenerator {
 			return to;
 		}
 
-		protected Slab toPre13SlabState(Slab from, Slab to) {
+		protected Slab toPreFlatteningSlab(Slab from, Slab to) {
 			to.setWaterlogged(false);
 			to.setType(from.getType());
 			return to;
 		}
 
-		protected Stairs toPre13StairsState(Stairs from, Stairs to) {
+		protected Stairs toPreFlatteningStairs(Stairs from, Stairs to) {
 			to.setShape(Shape.STRAIGHT);
 			to.setWaterlogged(false);
 			to.setFacing(from.getFacing());
@@ -141,7 +156,7 @@ public class LegacyBlockDataMappingsGenerator {
 			return to;
 		}
 
-		protected TrapDoor toPre13TrapDoor(TrapDoor from, TrapDoor to) {
+		protected TrapDoor toPreFlatteningTrapDoor(TrapDoor from, TrapDoor to) {
 			to.setWaterlogged(false);
 			to.setPowered(false);
 			to.setFacing(from.getFacing());
@@ -149,6 +164,25 @@ public class LegacyBlockDataMappingsGenerator {
 			to.setHalf(from.getHalf());
 			return to;
 		}
+
+		protected Wall to15Wall(Wall from, Wall to) {
+			for (BlockFace face : blockface_nsew) {
+				to.setHeight(face, from.getHeight(face) == Wall.Height.NONE ? Wall.Height.NONE : Wall.Height.LOW);
+			}
+			cloneWaterlogged(from, to);
+			to.setUp(from.isUp());
+			return to;
+		}
+
+		protected final Predicate<Wall> is15Wall = wall -> {
+			for (BlockFace face : blockface_nsew) {
+				Wall.Height height = wall.getHeight(face);
+				if ((height != Wall.Height.NONE) && (height != Wall.Height.LOW)) {
+					return false;
+				}
+			}
+			return true;
+		};
 
 		protected Ageable cloneAgeable(Ageable from, Ageable to) {
 			to.setAge((from.getAge() * to.getMaximumAge()) / from.getMaximumAge());
@@ -185,82 +219,433 @@ public class LegacyBlockDataMappingsGenerator {
 			return to;
 		}
 
-		protected MultipleFacing clearMutipleFacing(MultipleFacing mfacing) {
-			mfacing.getAllowedFaces().forEach(face -> mfacing.setFace(face, false));
-			return mfacing;
+		protected MultipleFacing cloneMultipleFacting(MultipleFacing from, MultipleFacing to) {
+			for (BlockFace face : to.getAllowedFaces()) {
+				to.setFace(face, from.hasFace(face));
+			}
+			return to;
 		}
+
+		protected Openable cloneOpenable(Openable from, Openable to) {
+			to.setOpen(from.isOpen());
+			return to;
+		}
+
+		protected Bisected cloneBisected(Bisected from, Bisected to) {
+			to.setHalf(from.getHalf());
+			return to;
+		}
+
+		protected Waterlogged cloneWaterlogged(Waterlogged from, Waterlogged to) {
+			to.setWaterlogged(from.isWaterlogged());
+			return to;
+		}
+
+		protected Wall cloneWall(Wall from, Wall to) {
+			for (BlockFace face : blockface_nsew) {
+				to.setHeight(face, from.getHeight(face));
+			}
+			cloneWaterlogged(from, to);
+			to.setUp(from.isUp());
+			return to;
+		}
+
+		protected Slab cloneSlab(Slab from, Slab to) {
+			cloneWaterlogged(from, to);
+			to.setType(from.getType());
+			return to;
+		}
+
+		protected Stairs cloneStairs(Stairs from, Stairs to) {
+			cloneDirectional(from, to);
+			cloneBisected(from, to);
+			cloneWaterlogged(from, to);
+			to.setShape(from.getShape());
+			return to;
+		}
+
+		protected Switch cloneSwitch(Switch from, Switch to) {
+			clonePowerable(from, to);
+			cloneDirectional(from, to);
+			to.setAttachedFace(from.getAttachedFace());
+			return to;
+		}
+
+		protected Fence cloneFence(Fence from, Fence to) {
+			cloneMultipleFacting(from, to);
+			cloneWaterlogged(from, to);
+			return to;
+		}
+
+		protected Gate cloneGate(Gate from, Gate to) {
+			cloneDirectional(from, to);
+			cloneOpenable(from, to);
+			clonePowerable(from, to);
+			to.setInWall(from.isInWall());
+			return to;
+		}
+
+		protected TrapDoor cloneTrapDoor(TrapDoor from, TrapDoor to) {
+			cloneDirectional(from, to);
+			cloneBisected(from, to);
+			cloneOpenable(from, to);
+			clonePowerable(from, to);
+			cloneWaterlogged(from, to);
+			return to;
+		}
+
+		protected Door cloneDoor(Door from, Door to) {
+			cloneDirectional(from, to);
+			cloneBisected(from, to);
+			cloneOpenable(from, to);
+			clonePowerable(from, to);
+			to.setHinge(from.getHinge());
+			return to;
+		}
+
+		protected WallSign cloneWallSign(WallSign from, WallSign to) {
+			cloneDirectional(from, to);
+			cloneWaterlogged(from, to);
+			return to;
+		}
+
+		protected Campfire cloneCampfire(Campfire from, Campfire to) {
+			cloneDirectional(from, to);
+			cloneWaterlogged(from, to);
+			to.setLit(from.isLit());
+			to.setSignalFire(from.isSignalFire());
+			return to;
+		}
+
+		protected Sign cloneSign(Sign from, Sign to) {
+			cloneRotatable(from, to);
+			cloneWaterlogged(from, to);
+			return to;
+		}
+
 
 		public void applyDefaultRemaps() {
 			clear();
 
-			this.registerRemapEntryForAllStates(Material.HONEY_BLOCK, Material.GRASS_PATH.createBlockData(), ProtocolVersionsHelper.BEFORE_1_15);
-			this.registerRemapEntryForAllStates(Material.HONEYCOMB_BLOCK, Material.HAY_BLOCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_15);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.BASALT, Material.ANDESITE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.POLISHED_BASALT, Material.POLISHED_ANDESITE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(
+				Arrays.asList(Material.GILDED_BLACKSTONE, Material.NETHER_GOLD_ORE),
+				Material.GOLD_ORE.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(Material.BLACKSTONE, Material.COBBLESTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.POLISHED_BLACKSTONE, Material.POLISHED_ANDESITE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.POLISHED_BLACKSTONE_BRICKS, Material.STONE_BRICKS.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(
+				Arrays.asList(Material.CHISELED_POLISHED_BLACKSTONE, Material.CHISELED_NETHER_BRICKS),
+				Material.CHISELED_STONE_BRICKS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.CRACKED_POLISHED_BLACKSTONE_BRICKS, Material.CRACKED_NETHER_BRICKS),
+				Material.CRACKED_STONE_BRICKS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Wall>registerAllStates(
+				Arrays.asList(Material.BLACKSTONE_WALL, Material.POLISHED_BLACKSTONE_WALL),
+				o -> to15Wall(o, (Wall) Material.COBBLESTONE_WALL.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Wall>registerAllStates(
+				Material.POLISHED_BLACKSTONE_BRICK_WALL,
+				o -> to15Wall(o, (Wall) Material.BRICK_WALL.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Slab>registerAllStates(
+				Material.BLACKSTONE_SLAB,
+				o -> cloneSlab(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Slab>registerAllStates(
+				Material.POLISHED_BLACKSTONE_SLAB,
+				o -> cloneSlab(o, (Slab) Material.ANDESITE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Slab>registerAllStates(
+				Material.POLISHED_BLACKSTONE_BRICK_SLAB,
+				o -> cloneSlab(o, (Slab) Material.STONE_BRICK_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Stairs>registerAllStates(
+				Material.BLACKSTONE_STAIRS,
+				o -> cloneStairs(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Stairs>registerAllStates(
+				Material.POLISHED_BLACKSTONE_STAIRS,
+				o -> cloneStairs(o, (Stairs) Material.ANDESITE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Stairs>registerAllStates(
+				Material.POLISHED_BLACKSTONE_BRICK_STAIRS,
+				o -> cloneStairs(o, (Stairs) Material.STONE_BRICK_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Switch>registerAllStates(
+				Material.POLISHED_BLACKSTONE_BUTTON,
+				o -> cloneSwitch(o, (Switch) Material.STONE_BUTTON.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Powerable>registerAllStates(
+				Material.POLISHED_BLACKSTONE_PRESSURE_PLATE,
+				o -> clonePowerable(o, (Powerable) Material.STONE_PRESSURE_PLATE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(Material.CRIMSON_FUNGUS, Material.RED_MUSHROOM.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.POTTED_CRIMSON_FUNGUS, Material.POTTED_RED_MUSHROOM.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.WARPED_FUNGUS, Material.BROWN_MUSHROOM.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.POTTED_WARPED_FUNGUS, Material.POTTED_BROWN_MUSHROOM.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(
+				Arrays.asList(Material.CRIMSON_NYLIUM, Material.WARPED_NYLIUM),
+				Material.MYCELIUM.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.CRIMSON_PLANKS, Material.WARPED_PLANKS),
+				Material.OAK_PLANKS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Slab>registerAllStates(
+				Arrays.asList(Material.CRIMSON_SLAB, Material.WARPED_SLAB),
+				o -> cloneSlab(o, (Slab) Material.OAK_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Stairs>registerAllStates(
+				Arrays.asList(Material.CRIMSON_STAIRS, Material.WARPED_STAIRS),
+				o -> cloneStairs(o, (Stairs) Material.OAK_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Switch>registerAllStates(
+				Arrays.asList(Material.CRIMSON_BUTTON, Material.WARPED_BUTTON),
+				o -> cloneSwitch(o, (Switch) Material.OAK_BUTTON.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Powerable>registerAllStates(
+				Arrays.asList(Material.CRIMSON_PRESSURE_PLATE, Material.WARPED_PRESSURE_PLATE),
+				o -> clonePowerable(o, (Powerable) Material.OAK_PRESSURE_PLATE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Fence>registerAllStates(
+				Arrays.asList(Material.CRIMSON_FENCE, Material.WARPED_FENCE),
+				o -> cloneFence(o, (Fence) Material.OAK_FENCE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Gate>registerAllStates(
+				Arrays.asList(Material.CRIMSON_FENCE_GATE, Material.WARPED_FENCE_GATE),
+				o -> cloneGate(o, (Gate) Material.OAK_FENCE_GATE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<TrapDoor>registerAllStates(
+				Arrays.asList(Material.CRIMSON_TRAPDOOR, Material.WARPED_TRAPDOOR),
+				o -> cloneTrapDoor(o, (TrapDoor) Material.OAK_TRAPDOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Door>registerAllStates(
+				Arrays.asList(Material.CRIMSON_DOOR, Material.WARPED_DOOR),
+				o -> cloneDoor(o, (Door) Material.OAK_DOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Sign>registerAllStates(
+				Arrays.asList(Material.CRIMSON_SIGN, Material.WARPED_SIGN),
+				o -> cloneSign(o, (Sign) Material.OAK_SIGN.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<WallSign>registerAllStates(
+				Arrays.asList(Material.CRIMSON_WALL_SIGN, Material.WARPED_WALL_SIGN),
+				o -> cloneWallSign(o, (WallSign) Material.OAK_WALL_SIGN.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.CRIMSON_HYPHAE, Material.CRIMSON_STEM, Material.WARPED_HYPHAE, Material.WARPED_STEM),
+				Material.OAK_WOOD.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.STRIPPED_CRIMSON_HYPHAE, Material.STRIPPED_CRIMSON_STEM, Material.STRIPPED_WARPED_HYPHAE, Material.STRIPPED_WARPED_STEM),
+				Material.STRIPPED_OAK_WOOD.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.CRIMSON_ROOTS, Material.WARPED_ROOTS),
+				Material.TALL_GRASS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.POTTED_CRIMSON_ROOTS, Material.POTTED_WARPED_ROOTS),
+				Material.POTTED_FERN.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.RESPAWN_ANCHOR, Material.ANCIENT_DEBRIS, Material.CRYING_OBSIDIAN, Material.NETHERITE_BLOCK),
+				Material.OBSIDIAN.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(Material.CHAIN, Material.IRON_BARS.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(
+				Arrays.asList(Material.TWISTING_VINES, Material.TWISTING_VINES_PLANT, Material. WEEPING_VINES, Material.WEEPING_VINES_PLANT),
+				Material.VINE.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(Material.NETHER_SPROUTS, Material.GRASS.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.QUARTZ_BRICKS, Material.CHISELED_QUARTZ_BLOCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.SOUL_TORCH, Material.TORCH.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.<Directional>registerAllStates(
+				Material.SOUL_WALL_TORCH,
+				o -> cloneDirectional(o, (Directional) Material.WALL_TORCH.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Campfire>registerAllStates(
+				Material.SOUL_CAMPFIRE,
+				o -> cloneCampfire(o, (Campfire) Material.CAMPFIRE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(Material.SOUL_FIRE, Material.FIRE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.<Lantern>registerAllStates(
+				Arrays.asList(Material.SOUL_LANTERN, Material.LANTERN),
+				o -> {
+					Lantern to = (Lantern) Material.LANTERN.createBlockData();
+					to.setHanging(o.isHanging());
+					return to;
+				},
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.registerAllStates(Material.SOUL_SOIL, Material.PODZOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.SHROOMLIGHT, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.WARPED_WART_BLOCK, Material.NETHER_WART_BLOCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.LODESTONE, Material.CHISELED_STONE_BRICKS.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.registerAllStates(Material.TARGET, Material.HAY_BLOCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_15_2);
+			this.<Wall>registerSomeStates(
+				Arrays.asList(
+					Material.ANDESITE_WALL, Material.GRANITE_WALL, Material.DIORITE_WALL, Material.MOSSY_STONE_BRICK_WALL,
+					Material.RED_NETHER_BRICK_WALL, Material.END_STONE_BRICK_WALL, Material.BRICK_WALL, Material.PRISMARINE_WALL,
+					Material.RED_SANDSTONE_WALL, Material.STONE_BRICK_WALL, Material.NETHER_BRICK_WALL, Material.SANDSTONE_WALL,
+					Material.COBBLESTONE_WALL, Material.MOSSY_COBBLESTONE_WALL
+				),
+				o -> {
+					for (BlockFace face : blockface_nsew) {
+						Wall.Height height = o.getHeight(face);
+						if (height == Wall.Height.TALL) {
+							return true;
+						}
+					}
+					return false;
+				},
+				o -> to15Wall(o, (Wall) o.getMaterial().createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+			this.<Jigsaw>registerAllStates(
+				Material.JIGSAW,
+				o -> {
+					Jigsaw jigsaw = (Jigsaw) Material.JIGSAW.createBlockData();
+					Jigsaw.Orientation orientation = o.getOrientation();
+					switch (orientation) {
+						case UP_EAST:
+						case UP_WEST:
+						case UP_SOUTH: {
+							jigsaw.setOrientation(Jigsaw.Orientation.UP_NORTH);
+							break;
+						}
+						case DOWN_EAST:
+						case DOWN_WEST:
+						case DOWN_SOUTH: {
+							jigsaw.setOrientation(Jigsaw.Orientation.DOWN_NORTH);
+							break;
+						}
+						default: {
+							jigsaw.setOrientation(orientation);
+							break;
+						}
+					}
+					return jigsaw;
+				},
+				ProtocolVersionsHelper.DOWN_1_15_2
+			);
+
+			this.registerAllStates(Material.HONEY_BLOCK, Material.GRASS_PATH.createBlockData(), ProtocolVersionsHelper.DOWN_1_14_4);
+			this.registerAllStates(Material.HONEYCOMB_BLOCK, Material.HAY_BLOCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_14_4);
+			this.registerAllStates(
 				Arrays.asList(Material.BEEHIVE, Material.BEE_NEST),
 				Material.JUNGLE_WOOD.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_15
+				ProtocolVersionsHelper.DOWN_1_14_4
 			);
-			this.<Bell>registerRemapEntryForAllStates(
+			this.<Bell>registerAllStates(
 				Material.BELL,
 				o -> {
 					Bell bell = (Bell) o.getMaterial().createBlockData();
+					cloneDirectional(o, bell);
 					bell.setAttachment(o.getAttachment());
-					bell.setFacing(o.getFacing());
+					bell.setPowered(false);
 					return bell;
 				},
-				ProtocolVersionsHelper.BEFORE_1_15
+				ProtocolVersionsHelper.DOWN_1_14_4
 			);
 
-			this.<Directional>registerRemapEntryForAllStates(
+			this.<Directional>registerAllStates(
 				Material.BARREL,
 				o -> cloneDirectional(o, (Directional) Material.FURNACE.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.registerRemapEntryForAllStates(Material.BELL, Material.NOTE_BLOCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.<Directional>registerRemapEntryForAllStates(
+			this.<Bell>registerSomeStates(
+				Material.BELL,
+				o -> !o.isPowered(),
+				Material.NOTE_BLOCK.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_13_2
+			);
+			this.<Directional>registerAllStates(
 				Arrays.asList(Material.BLAST_FURNACE, Material.SMOKER),
 				o -> cloneDirectional(o, (Directional) Material.FURNACE.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<Campfire>registerRemapEntryForAllStates(
+			this.<Campfire>registerAllStates(
 				Material.CAMPFIRE,
 				o -> Material.OAK_SLAB.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(Material.CARTOGRAPHY_TABLE, Material.FLETCHING_TABLE, Material.LOOM, Material.SMITHING_TABLE),
 				Material.CRAFTING_TABLE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<Levelled>registerRemapEntryForAllStates(
+			this.<Levelled>registerAllStates(
 				Material.COMPOSTER,
 				o -> cloneLevelled(o, (Levelled) Material.CAULDRON.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<Directional>registerRemapEntryForAllStates(
+			this.<Directional>registerAllStates(
 				Arrays.asList(Material.GRINDSTONE, Material.STONECUTTER),
 				o -> cloneDirectional(o, (Directional) Material.ANVIL.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.registerRemapEntryForAllStates(Material.JIGSAW, Material.BEDROCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.LANTERN, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.LECTERN, Material.BOOKSHELF.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.<Scaffolding>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.registerAllStates(Material.JIGSAW, Material.BEDROCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2));
+			this.<Lantern>registerSomeStates(
+				Material.LANTERN,
+				o -> !o.isWaterlogged(),
+				Material.GLOWSTONE.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_13_2
+			);
+			this.registerAllStates(Material.LECTERN, Material.BOOKSHELF.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.<Scaffolding>registerAllStates(
 				Material.SCAFFOLDING,
 				o -> o.isBottom() ? Material.OAK_PLANKS.createBlockData() : Material.LADDER.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.registerRemapEntryForAllStates(Material.CORNFLOWER, Material.BLUE_ORCHID.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.LILY_OF_THE_VALLEY, Material.AZURE_BLUET.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.WITHER_ROSE, Material.POPPY.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.BAMBOO, Material.SUGAR_CANE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.POTTED_CORNFLOWER, Material.POTTED_BLUE_ORCHID.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.POTTED_LILY_OF_THE_VALLEY, Material.POTTED_AZURE_BLUET.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.POTTED_WITHER_ROSE, Material.POTTED_POPPY.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.POTTED_BAMBOO, Material.POTTED_OAK_SAPLING.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.BAMBOO_SAPLING, Material.OAK_SAPLING.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.registerRemapEntryForAllStates(Material.SWEET_BERRY_BUSH, Material.GRASS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_14);
-			this.<Sign>registerRemapEntryForAllStates(
+			this.registerAllStates(Material.CORNFLOWER, Material.BLUE_ORCHID.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.LILY_OF_THE_VALLEY, Material.AZURE_BLUET.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.WITHER_ROSE, Material.POPPY.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.BAMBOO, Material.SUGAR_CANE.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.POTTED_CORNFLOWER, Material.POTTED_BLUE_ORCHID.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.POTTED_LILY_OF_THE_VALLEY, Material.POTTED_AZURE_BLUET.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.POTTED_WITHER_ROSE, Material.POTTED_POPPY.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.POTTED_BAMBOO, Material.POTTED_OAK_SAPLING.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.BAMBOO_SAPLING, Material.OAK_SAPLING.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.registerAllStates(Material.SWEET_BERRY_BUSH, Material.GRASS.createBlockData(), ProtocolVersionsHelper.DOWN_1_13_2);
+			this.<Sign>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_SIGN, Material.BIRCH_SIGN, Material.DARK_OAK_SIGN,
 					Material.JUNGLE_SIGN, Material.SPRUCE_SIGN
@@ -270,9 +655,9 @@ public class LegacyBlockDataMappingsGenerator {
 					cloneRotatable(o, sign);
 					sign.setWaterlogged(o.isWaterlogged());
 				}),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<WallSign>registerRemapEntryForAllStates(
+			this.<WallSign>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_WALL_SIGN, Material.BIRCH_WALL_SIGN, Material.DARK_OAK_WALL_SIGN,
 					Material.JUNGLE_WALL_SIGN, Material.SPRUCE_WALL_SIGN
@@ -282,54 +667,43 @@ public class LegacyBlockDataMappingsGenerator {
 					cloneDirectional(o, sign);
 					sign.setWaterlogged(o.isWaterlogged());
 				}),
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<Slab>registerRemapEntryForAllStates(
+			this.<Slab>registerAllStates(
 				Arrays.asList(
 					Material.ANDESITE_SLAB, Material.POLISHED_ANDESITE_SLAB, Material.GRANITE_SLAB, Material.POLISHED_GRANITE_SLAB, Material.MOSSY_STONE_BRICK_SLAB,
 					Material.MOSSY_COBBLESTONE_SLAB, Material.SMOOTH_SANDSTONE_SLAB, Material.CUT_SANDSTONE_SLAB, Material.SMOOTH_RED_SANDSTONE_SLAB,
 					Material.CUT_RED_SANDSTONE_SLAB, Material.SMOOTH_QUARTZ_SLAB, Material.RED_NETHER_BRICK_SLAB, Material.END_STONE_BRICK_SLAB,
 					Material.DIORITE_SLAB, Material.POLISHED_DIORITE_SLAB, Material.SMOOTH_STONE_SLAB
 				),
-				o -> Material.COBBLESTONE_SLAB.createBlockData(to -> {
-					Slab slab = (Slab) to;
-					slab.setType(o.getType());
-					slab.setWaterlogged(o.isWaterlogged());
-				}),
-				ProtocolVersionsHelper.BEFORE_1_14
+				o -> cloneSlab(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<Stairs>registerRemapEntryForAllStates(
+			this.<Stairs>registerAllStates(
 				Arrays.asList(
 					Material.ANDESITE_STAIRS, Material.POLISHED_ANDESITE_STAIRS, Material.GRANITE_STAIRS, Material.POLISHED_GRANITE_STAIRS,
 					Material.MOSSY_STONE_BRICK_STAIRS, Material.MOSSY_COBBLESTONE_STAIRS, Material.SMOOTH_SANDSTONE_STAIRS,
 					Material.SMOOTH_RED_SANDSTONE_STAIRS, Material.SMOOTH_QUARTZ_STAIRS, Material.RED_NETHER_BRICK_STAIRS,
 					Material.END_STONE_BRICK_STAIRS, Material.DIORITE_STAIRS, Material.POLISHED_DIORITE_STAIRS, Material.STONE_STAIRS
 				),
-				o -> Material.COBBLESTONE_STAIRS.createBlockData(to -> {
-					Stairs stairs = (Stairs) to;
-					cloneDirectional(o, stairs);
-					stairs.setShape(o.getShape());
-					stairs.setHalf(o.getHalf());
-					stairs.setWaterlogged(o.isWaterlogged());
-				}),
-				ProtocolVersionsHelper.BEFORE_1_14
+				o -> cloneStairs(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<Fence>registerRemapEntryForAllStates(
+			this.<Wall>registerSomeStates(
 				Arrays.asList(
-					Material.ANDESITE_WALL, Material.GRANITE_WALL, Material.DIORITE_WALL, Material.MOSSY_STONE_BRICK_WALL,
+					Material.ANDESITE_WALL, Material.GRANITE_WALL, Material.DIORITE_WALL,
 					Material.RED_NETHER_BRICK_WALL, Material.END_STONE_BRICK_WALL, Material.BRICK_WALL, Material.PRISMARINE_WALL,
 					Material.RED_SANDSTONE_WALL, Material.STONE_BRICK_WALL, Material.NETHER_BRICK_WALL, Material.SANDSTONE_WALL
-				),
-				o -> Material.COBBLESTONE_WALL.createBlockData(to -> {
-					Fence fence = (Fence) to;
-					for (BlockFace face : o.getFaces()) {
-						fence.setFace(face, true);
-					}
-					fence.setWaterlogged(o.isWaterlogged());
-				}),
-				ProtocolVersionsHelper.BEFORE_1_14
+				), is15Wall,
+				o -> cloneWall(o, (Wall) Material.COBBLESTONE_WALL.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
-			this.<NoteBlock>registerRemapEntryForAllStates(
+			this.<Wall>registerSomeStates(
+				Material.MOSSY_STONE_BRICK_WALL, is15Wall,
+				o -> cloneWall(o, (Wall) Material.MOSSY_COBBLESTONE_WALL.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_13_2
+			);
+			this.<NoteBlock>registerAllStates(
 				Material.NOTE_BLOCK,
 				o -> {
 					NoteBlock noteblock = (NoteBlock) o.getMaterial().createBlockData();
@@ -352,16 +726,16 @@ public class LegacyBlockDataMappingsGenerator {
 					}
 					return noteblock;
 				},
-				ProtocolVersionsHelper.BEFORE_1_14
+				ProtocolVersionsHelper.DOWN_1_13_2
 			);
 
-			this.registerRemapEntryForAllStates(Material.TNT, o -> o.getMaterial().createBlockData(), ProtocolVersionsHelper.BEFORE_1_13_1);
-			this.registerRemapEntryForAllStates(Material.DEAD_BRAIN_CORAL, Material.BRAIN_CORAL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13_1);
-			this.registerRemapEntryForAllStates(Material.DEAD_BUBBLE_CORAL, Material.BUBBLE_CORAL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13_1);
-			this.registerRemapEntryForAllStates(Material.DEAD_FIRE_CORAL, Material.FIRE_CORAL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13_1);
-			this.registerRemapEntryForAllStates(Material.DEAD_HORN_CORAL, Material.HORN_CORAL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13_1);
-			this.registerRemapEntryForAllStates(Material.DEAD_TUBE_CORAL, Material.TUBE_CORAL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13_1);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.TNT, o -> o.getMaterial().createBlockData(), ProtocolVersionsHelper.DOWN_1_13);
+			this.registerAllStates(Material.DEAD_BRAIN_CORAL, Material.BRAIN_CORAL.createBlockData(), ProtocolVersionsHelper.DOWN_1_13);
+			this.registerAllStates(Material.DEAD_BUBBLE_CORAL, Material.BUBBLE_CORAL.createBlockData(), ProtocolVersionsHelper.DOWN_1_13);
+			this.registerAllStates(Material.DEAD_FIRE_CORAL, Material.FIRE_CORAL.createBlockData(), ProtocolVersionsHelper.DOWN_1_13);
+			this.registerAllStates(Material.DEAD_HORN_CORAL, Material.HORN_CORAL.createBlockData(), ProtocolVersionsHelper.DOWN_1_13);
+			this.registerAllStates(Material.DEAD_TUBE_CORAL, Material.TUBE_CORAL.createBlockData(), ProtocolVersionsHelper.DOWN_1_13);
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BRAIN_CORAL, Material.BUBBLE_CORAL, Material.FIRE_CORAL, Material.HORN_CORAL, Material.TUBE_CORAL, Material.CONDUIT
 				),
@@ -369,14 +743,14 @@ public class LegacyBlockDataMappingsGenerator {
 				ProtocolVersion.MINECRAFT_1_13
 			);
 
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES, Material.BIRCH_LEAVES,
 					Material.JUNGLE_LEAVES, Material.SPRUCE_LEAVES, Material.OAK_LEAVES,
 					Material.ACACIA_FENCE, Material.DARK_OAK_FENCE, Material.BIRCH_FENCE,
 					Material.JUNGLE_FENCE, Material.SPRUCE_FENCE, Material.OAK_FENCE,
 					Material.NETHER_BRICK_FENCE, Material.IRON_BARS,
-					Material.CHORUS_PLANT, Material.MUSHROOM_STEM, Material.BROWN_MUSHROOM_BLOCK, Material.RED_MUSHROOM_BLOCK, Material.GLASS_PANE,
+					Material.CHORUS_PLANT, Material.GLASS_PANE,
 					Material.BLACK_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE, Material.BROWN_STAINED_GLASS_PANE, Material.CYAN_STAINED_GLASS_PANE,
 					Material.GRAY_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.LIGHT_GRAY_STAINED_GLASS_PANE,
 					Material.LIME_STAINED_GLASS_PANE, Material.MAGENTA_STAINED_GLASS_PANE, Material.ORANGE_STAINED_GLASS_PANE, Material.PINK_STAINED_GLASS_PANE,
@@ -384,16 +758,47 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.GRASS_BLOCK, Material.MYCELIUM, Material.PODZOL
 				),
 				o -> o.getMaterial().createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
+			);
+			this.<MultipleFacing>registerAllStates(
+				Material.MUSHROOM_STEM,
+				o -> {
+					Set<BlockFace> faces = o.getFaces();
+					boolean sidedaces = faces.containsAll(Arrays.asList(blockface_nsew));
+					MultipleFacing to = (MultipleFacing) o.getMaterial().createBlockData();
+					if (!sidedaces) {
+						for (BlockFace face : blockface_nsew) {
+							to.setFace(face, false);
+						}
+					}
+					if (!sidedaces || !faces.contains(BlockFace.UP) || !faces.contains(BlockFace.DOWN)) {
+						to.setFace(BlockFace.UP, false);
+						to.setFace(BlockFace.DOWN, false);
+					}
+					return to;
+				},
+				ProtocolVersionsHelper.DOWN_1_12_2
+			);
+			this.<MultipleFacing>registerSomeStates(
+				Arrays.asList(Material.BROWN_MUSHROOM_BLOCK, Material.RED_MUSHROOM_BLOCK),
+				o -> !PreFlatteningBlockIdDataMappingsGenerator.exists(MaterialAPI.getBlockDataNetworkId(o)),
+				o -> {
+					MultipleFacing to = (MultipleFacing) o.getMaterial().createBlockData();
+					for (BlockFace face : to.getAllowedFaces()) {
+						to.setFace(face, false);
+					}
+					return to;
+				},
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
 			this.withIgnoringDuplicateRemaps(() -> {
-				this.registerRemapEntryForAllStates(
+				this.registerAllStates(
 					Material.NOTE_BLOCK,
 					o -> o.getMaterial().createBlockData(),
-					ProtocolVersionsHelper.BEFORE_1_13
+					ProtocolVersionsHelper.DOWN_1_12_2
 				);
 			});
-			this.<Directional>registerRemapEntryForAllStates(
+			this.<Directional>registerAllStates(
 				Arrays.asList(
 					Material.SKELETON_WALL_SKULL,
 					Material.WITHER_SKELETON_WALL_SKULL,
@@ -403,58 +808,66 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.ZOMBIE_WALL_HEAD
 				),
 				o -> cloneDirectional(o, (Directional) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<MultipleFacing>registerRemapEntryForAllStates(
+			this.<Wall>registerSomeStates(
 				Arrays.asList(Material.COBBLESTONE_WALL, Material.MOSSY_COBBLESTONE_WALL),
-				o -> clearMutipleFacing((MultipleFacing) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				is15Wall,
+				o -> o.getMaterial().createBlockData(to -> {
+					Wall wall = (Wall) to;
+					for (BlockFace face : blockface_nsew) {
+						wall.setHeight(face, Wall.Height.NONE);
+					}
+					wall.setUp(false);
+					wall.setWaterlogged(false);
+				}),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<MultipleFacing>registerRemapEntryForAllStates(
+			this.<MultipleFacing>registerAllStates(
 				Material.VINE,
 				o -> {
 					MultipleFacing mfacing = (MultipleFacing) o.clone();
 					mfacing.setFace(BlockFace.UP, true);
 					return mfacing;
 				},
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Gate>registerRemapEntryForAllStates(
+			this.<Gate>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_FENCE_GATE, Material.DARK_OAK_FENCE_GATE, Material.BIRCH_FENCE_GATE,
 					Material.JUNGLE_FENCE_GATE, Material.OAK_FENCE_GATE, Material.SPRUCE_FENCE_GATE
 				),
-				o -> toPre13GateState(o, (Gate) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningGate(o, (Gate) o.getMaterial().createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Switch>registerRemapEntryForAllStates(
+			this.<Switch>registerAllStates(
 				Material.LEVER,
-				o -> toPre13ButtonState(o, (Switch) o.getMaterial().createBlockData(), true),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningSwitch(o, (Switch) o.getMaterial().createBlockData(), true),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Switch>registerRemapEntryForAllStates(
+			this.<Switch>registerAllStates(
 				Material.STONE_BUTTON,
-				o -> toPre13ButtonState(o, (Switch) o.getMaterial().createBlockData(), false),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningSwitch(o, (Switch) o.getMaterial().createBlockData(), false),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Switch>registerRemapEntryForAllStates(
+			this.<Switch>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_BUTTON, Material.DARK_OAK_BUTTON, Material.BIRCH_BUTTON,
 					Material.JUNGLE_BUTTON, Material.OAK_BUTTON, Material.SPRUCE_BUTTON
 				),
-				o -> toPre13ButtonState(o, (Switch) Material.OAK_BUTTON.createBlockData(), false),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningSwitch(o, (Switch) Material.OAK_BUTTON.createBlockData(), false),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Door>registerRemapEntryForAllStates(
+			this.<Door>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.BIRCH_DOOR,
 					Material.JUNGLE_DOOR, Material.OAK_DOOR, Material.SPRUCE_DOOR,
 					Material.IRON_DOOR
 				),
-				o -> toPre13DoorState(o, (Door) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningDoor(o, (Door) o.getMaterial().createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Slab>registerRemapEntryForAllStates(
+			this.<Slab>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_SLAB, Material.DARK_OAK_SLAB, Material.BIRCH_SLAB,
 					Material.JUNGLE_SLAB, Material.OAK_SLAB, Material.SPRUCE_SLAB,
@@ -463,23 +876,23 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.NETHER_BRICK_SLAB, Material.QUARTZ_SLAB, Material.PURPUR_SLAB,
 					Material.PETRIFIED_OAK_SLAB
 				),
-				o -> toPre13SlabState(o, (Slab) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningSlab(o, (Slab) o.getMaterial().createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Slab>registerRemapEntryForAllStates(
+			this.<Slab>registerAllStates(
 				Arrays.asList(Material.PRISMARINE_BRICK_SLAB, Material.PRISMARINE_SLAB, Material.DARK_PRISMARINE_SLAB),
-				o -> toPre13SlabState(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningSlab(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Powerable>registerRemapEntryForAllStates(
+			this.<Powerable>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_PRESSURE_PLATE, Material.DARK_OAK_PRESSURE_PLATE, Material.BIRCH_PRESSURE_PLATE,
 					Material.JUNGLE_PRESSURE_PLATE, Material.SPRUCE_PRESSURE_PLATE
 				),
 				o -> clonePowerable(o, (Powerable) Material.OAK_PRESSURE_PLATE.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Stairs>registerRemapEntryForAllStates(
+			this.<Stairs>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_STAIRS, Material.DARK_OAK_STAIRS, Material.BIRCH_STAIRS,
 					Material.JUNGLE_STAIRS, Material.OAK_STAIRS, Material.SPRUCE_STAIRS,
@@ -488,30 +901,30 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.QUARTZ_STAIRS, Material.NETHER_BRICK_STAIRS, Material.PURPUR_STAIRS,
 					Material.BRICK_STAIRS
 				),
-				o -> toPre13StairsState(o, (Stairs) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningStairs(o, (Stairs) o.getMaterial().createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Stairs>registerRemapEntryForAllStates(
+			this.<Stairs>registerAllStates(
 				Arrays.asList(
 					Material.PRISMARINE_BRICK_STAIRS, Material.PRISMARINE_STAIRS, Material.DARK_PRISMARINE_STAIRS
 				),
-				o -> toPre13StairsState(o, (Stairs) Material.STONE_BRICK_STAIRS.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningStairs(o, (Stairs) Material.STONE_BRICK_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<TrapDoor>registerRemapEntryForAllStates(
+			this.<TrapDoor>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_TRAPDOOR, Material.DARK_OAK_TRAPDOOR, Material.BIRCH_TRAPDOOR,
 					Material.JUNGLE_TRAPDOOR, Material.OAK_TRAPDOOR, Material.SPRUCE_TRAPDOOR
 				),
-				o -> toPre13TrapDoor(o, (TrapDoor) Material.OAK_TRAPDOOR.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningTrapDoor(o, (TrapDoor) Material.OAK_TRAPDOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<TrapDoor>registerRemapEntryForAllStates(
+			this.<TrapDoor>registerAllStates(
 				Material.IRON_TRAPDOOR,
-				o -> toPre13TrapDoor(o, (TrapDoor) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				o -> toPreFlatteningTrapDoor(o, (TrapDoor) o.getMaterial().createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Bed>registerRemapEntryForAllStates(
+			this.<Bed>registerAllStates(
 				Arrays.asList(
 					Material.BLACK_BED, Material.BLUE_BED, Material.BROWN_BED, Material.CYAN_BED,
 					Material.GRAY_BED, Material.GREEN_BED, Material.LIGHT_BLUE_BED, Material.LIGHT_GRAY_BED,
@@ -522,31 +935,22 @@ public class LegacyBlockDataMappingsGenerator {
 					Bed bed = (Bed) Material.RED_BED.createBlockData();
 					bed.setFacing(o.getFacing());
 					bed.setPart(o.getPart());
+					setBedOccupied(bed, o.isOccupied());
 					return bed;
 				},
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Directional>registerRemapEntryForAllStates(
-				Arrays.asList(Material.LADDER, Material.ENDER_CHEST, Material.OAK_WALL_SIGN),
+			this.<Directional>registerAllStates(
+				Arrays.asList(Material.LADDER, Material.ENDER_CHEST, Material.CHEST, Material.TRAPPED_CHEST, Material.OAK_WALL_SIGN),
 				o -> cloneDirectional(o, (Directional) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Rotatable>registerRemapEntryForAllStates(
+			this.<Rotatable>registerAllStates(
 				Material.OAK_SIGN,
 				o -> cloneRotatable(o, (Rotatable) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Chest>registerRemapEntryForAllStates(
-				Arrays.asList(Material.CHEST, Material.TRAPPED_CHEST),
-				o -> {
-					EnderChest enderChest = (EnderChest) Material.ENDER_CHEST.createBlockData();
-					enderChest.setWaterlogged(false);
-					enderChest.setFacing(o.getFacing());
-					return enderChest;
-				},
-				ProtocolVersionsHelper.BEFORE_1_13
-			);
-			this.<PistonHead>registerRemapEntryForAllStates(
+			this.<PistonHead>registerAllStates(
 				Material.PISTON_HEAD,
 				o -> {
 					PistonHead pistonHead = (PistonHead) o.getMaterial().createBlockData();
@@ -554,14 +958,14 @@ public class LegacyBlockDataMappingsGenerator {
 					pistonHead.setType(o.getType());
 					return pistonHead;
 				},
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Fire>registerRemapEntryForAllStates(
+			this.<Fire>registerAllStates(
 				Material.FIRE,
 				o -> cloneAgeable(o, (Fire) o.getMaterial().createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Tripwire>registerRemapEntryForAllStates(
+			this.<Tripwire>registerAllStates(
 				Material.TRIPWIRE,
 				o -> {
 					Tripwire tripwire = (Tripwire) o.getMaterial().createBlockData();
@@ -570,18 +974,18 @@ public class LegacyBlockDataMappingsGenerator {
 					tripwire.setDisarmed(o.isDisarmed());
 					return tripwire;
 				},
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<RedstoneWire>registerRemapEntryForAllStates(
+			this.<RedstoneWire>registerAllStates(
 				Material.REDSTONE_WIRE,
 				o -> {
 					RedstoneWire wire = (RedstoneWire) o.getMaterial().createBlockData();
 					wire.setPower(o.getPower());
 					return wire;
 				},
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Repeater>registerRemapEntryForAllStates(
+			this.<Repeater>registerAllStates(
 				Material.REPEATER,
 				o -> {
 					Repeater repeater = (Repeater) Material.REPEATER.createBlockData();
@@ -590,28 +994,28 @@ public class LegacyBlockDataMappingsGenerator {
 					repeater.setFacing(o.getFacing());
 					return repeater;
 				},
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(Material.CAVE_AIR, Material.VOID_AIR),
 				Material.AIR.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.registerRemapEntryForAllStates(Material.ATTACHED_MELON_STEM, o -> {
+			this.registerAllStates(Material.ATTACHED_MELON_STEM, o -> {
 				return Material.MELON_STEM.createBlockData(data -> {
 					((Ageable) data).setAge(((Ageable) data).getMaximumAge());
 				});
-			}, ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.ATTACHED_PUMPKIN_STEM, o -> {
+			}, ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.ATTACHED_PUMPKIN_STEM, o -> {
 				return Material.PUMPKIN_STEM.createBlockData(data -> {
 					((Ageable) data).setAge(((Ageable) data).getMaximumAge());
 				});
-			}, ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.BLUE_ICE, Material.LIGHT_BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.BUBBLE_COLUMN, Material.WATER.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.PUMPKIN, Material.CARVED_PUMPKIN.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.CONDUIT, Material.STONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(
+			}, ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.BLUE_ICE, Material.LIGHT_BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.BUBBLE_COLUMN, Material.WATER.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.PUMPKIN, Material.CARVED_PUMPKIN.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.CONDUIT, Material.STONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BRAIN_CORAL, Material.BRAIN_CORAL_FAN, Material.BRAIN_CORAL_WALL_FAN,
 					Material.BUBBLE_CORAL, Material.BUBBLE_CORAL_FAN, Material.BUBBLE_CORAL_WALL_FAN,
@@ -625,95 +1029,95 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.DEAD_TUBE_CORAL_FAN, Material.DEAD_TUBE_CORAL_WALL_FAN
 				),
 				Material.DANDELION.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.registerRemapEntryForAllStates(Material.TUBE_CORAL_BLOCK, Material.BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.BRAIN_CORAL_BLOCK, Material.PINK_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.BUBBLE_CORAL_BLOCK, Material.PURPLE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.FIRE_CORAL_BLOCK, Material.RED_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.HORN_CORAL_BLOCK, Material.YELLOW_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.TUBE_CORAL_BLOCK, Material.BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.BRAIN_CORAL_BLOCK, Material.PINK_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.BUBBLE_CORAL_BLOCK, Material.PURPLE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.FIRE_CORAL_BLOCK, Material.RED_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.HORN_CORAL_BLOCK, Material.YELLOW_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(
 				Arrays.asList(
 					Material.DEAD_BRAIN_CORAL_BLOCK, Material.DEAD_BUBBLE_CORAL_BLOCK, Material.DEAD_FIRE_CORAL_BLOCK,
 					Material.DEAD_HORN_CORAL_BLOCK, Material.DEAD_TUBE_CORAL_BLOCK
 				),
 				Material.LIGHT_GRAY_WOOL.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.registerRemapEntryForAllStates(Material.DRIED_KELP_BLOCK, Material.GREEN_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(Material.SHULKER_BOX, Material.PINK_SHULKER_BOX.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.DRIED_KELP_BLOCK, Material.GREEN_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(Material.SHULKER_BOX, Material.PINK_SHULKER_BOX.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(
 				Arrays.asList(Material.SEA_PICKLE, Material.TURTLE_EGG),
 				Material.CAKE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.registerRemapEntryForAllStates(Material.SEAGRASS, Material.GRASS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_13);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.SEAGRASS, Material.GRASS.createBlockData(), ProtocolVersionsHelper.DOWN_1_12_2);
+			this.registerAllStates(
 				Arrays.asList(Material.TALL_SEAGRASS, Material.KELP, Material.KELP_PLANT),
 				Material.TALL_GRASS.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_ACACIA_LOG,
 				o -> cloneOrientable(o, (Orientable) Material.ACACIA_LOG.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_ACACIA_WOOD,
 				o -> cloneOrientable(o, (Orientable) Material.ACACIA_WOOD.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_DARK_OAK_LOG,
 				o -> cloneOrientable(o, (Orientable) Material.DARK_OAK_LOG.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_DARK_OAK_WOOD,
 				o -> cloneOrientable(o, (Orientable) Material.DARK_OAK_WOOD.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_BIRCH_LOG,
 				o -> cloneOrientable(o, (Orientable) Material.BIRCH_LOG.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_BIRCH_WOOD,
 				o -> cloneOrientable(o, (Orientable) Material.BIRCH_WOOD.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_JUNGLE_LOG,
 				o -> cloneOrientable(o, (Orientable) Material.JUNGLE_LOG.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_JUNGLE_WOOD,
 				o -> cloneOrientable(o, (Orientable) Material.JUNGLE_WOOD.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_SPRUCE_LOG,
 				o -> cloneOrientable(o, (Orientable) Material.SPRUCE_LOG.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_SPRUCE_WOOD,
 				o -> cloneOrientable(o, (Orientable) Material.SPRUCE_WOOD.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_OAK_LOG,
 				o -> cloneOrientable(o, (Orientable) Material.OAK_LOG.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.<Orientable>registerRemapEntryForAllStates(
+			this.<Orientable>registerAllStates(
 				Material.STRIPPED_OAK_WOOD,
 				o -> cloneOrientable(o, (Orientable) Material.OAK_WOOD.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.POTTED_ACACIA_SAPLING, Material.POTTED_ALLIUM, Material.POTTED_AZURE_BLUET, Material.POTTED_BIRCH_SAPLING,
 					Material.POTTED_BLUE_ORCHID, Material.POTTED_BROWN_MUSHROOM, Material.POTTED_CACTUS, Material.POTTED_DANDELION,
@@ -723,10 +1127,10 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.POTTED_WHITE_TULIP
 				),
 				Material.FLOWER_POT.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_13
+				ProtocolVersionsHelper.DOWN_1_12_2
 			);
 
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BLACK_CONCRETE, Material.BLUE_CONCRETE, Material.BROWN_CONCRETE, Material.CYAN_CONCRETE,
 					Material.GRAY_CONCRETE, Material.GREEN_CONCRETE, Material.LIGHT_BLUE_CONCRETE, Material.LIGHT_GRAY_CONCRETE,
@@ -738,32 +1142,32 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_GLAZED_TERRACOTTA, Material.RED_GLAZED_TERRACOTTA, Material.WHITE_GLAZED_TERRACOTTA, Material.YELLOW_GLAZED_TERRACOTTA
 				),
 				Material.BRICKS.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_12
+				ProtocolVersionsHelper.DOWN_1_11_1
 			);
-			this.registerRemapEntryForAllStates(Material.BLACK_CONCRETE_POWDER, Material.BLACK_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.BLUE_CONCRETE_POWDER, Material.BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.BROWN_CONCRETE_POWDER, Material.BROWN_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.CYAN_CONCRETE_POWDER, Material.CYAN_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.GRAY_CONCRETE_POWDER, Material.GRAY_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.GREEN_CONCRETE_POWDER, Material.GREEN_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.LIGHT_BLUE_CONCRETE_POWDER, Material.LIGHT_BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.LIGHT_GRAY_CONCRETE_POWDER, Material.LIGHT_GRAY_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.LIME_CONCRETE_POWDER, Material.LIME_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.MAGENTA_CONCRETE_POWDER, Material.MAGENTA_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.ORANGE_CONCRETE_POWDER, Material.ORANGE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.PINK_CONCRETE_POWDER, Material.PINK_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.PURPLE_CONCRETE_POWDER, Material.PURPLE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.RED_CONCRETE_POWDER, Material.RED_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.WHITE_CONCRETE_POWDER, Material.WHITE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
-			this.registerRemapEntryForAllStates(Material.YELLOW_CONCRETE_POWDER, Material.YELLOW_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_12);
+			this.registerAllStates(Material.BLACK_CONCRETE_POWDER, Material.BLACK_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.BLUE_CONCRETE_POWDER, Material.BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.BROWN_CONCRETE_POWDER, Material.BROWN_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.CYAN_CONCRETE_POWDER, Material.CYAN_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.GRAY_CONCRETE_POWDER, Material.GRAY_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.GREEN_CONCRETE_POWDER, Material.GREEN_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.LIGHT_BLUE_CONCRETE_POWDER, Material.LIGHT_BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.LIGHT_GRAY_CONCRETE_POWDER, Material.LIGHT_GRAY_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.LIME_CONCRETE_POWDER, Material.LIME_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.MAGENTA_CONCRETE_POWDER, Material.MAGENTA_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.ORANGE_CONCRETE_POWDER, Material.ORANGE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.PINK_CONCRETE_POWDER, Material.PINK_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.PURPLE_CONCRETE_POWDER, Material.PURPLE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.RED_CONCRETE_POWDER, Material.RED_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.WHITE_CONCRETE_POWDER, Material.WHITE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
+			this.registerAllStates(Material.YELLOW_CONCRETE_POWDER, Material.YELLOW_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_11_1);
 
 
-			this.<Observer>registerRemapEntryForAllStates(
+			this.<Observer>registerAllStates(
 				Material.OBSERVER,
 				o -> cloneDirectional(o, (Directional) Material.FURNACE.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_11
+				ProtocolVersionsHelper.DOWN_1_10
 			);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BLACK_SHULKER_BOX, Material.BLUE_SHULKER_BOX, Material.BROWN_SHULKER_BOX, Material.CYAN_SHULKER_BOX,
 					Material.GRAY_SHULKER_BOX, Material.GREEN_SHULKER_BOX, Material.LIGHT_BLUE_SHULKER_BOX, Material.LIGHT_GRAY_SHULKER_BOX,
@@ -771,68 +1175,68 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_SHULKER_BOX, Material.RED_SHULKER_BOX, Material.WHITE_SHULKER_BOX, Material.YELLOW_SHULKER_BOX
 				),
 				Material.FURNACE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_11
+				ProtocolVersionsHelper.DOWN_1_10
 			);
 
-			this.registerRemapEntryForAllStates(Material.STRUCTURE_VOID, Material.GLASS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_10);
-			this.registerRemapEntryForAllStates(Material.NETHER_WART_BLOCK, Material.RED_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_10);
-			this.registerRemapEntryForAllStates(Material.RED_NETHER_BRICKS, Material.NETHER_BRICKS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_10);
-			this.registerRemapEntryForAllStates(Material.MAGMA_BLOCK, Material.NETHERRACK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_10);
-			this.registerRemapEntryForAllStates(Material.BONE_BLOCK, o -> {
+			this.registerAllStates(Material.STRUCTURE_VOID, Material.GLASS.createBlockData(), ProtocolVersionsHelper.DOWN_1_9_4);
+			this.registerAllStates(Material.NETHER_WART_BLOCK, Material.RED_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_9_4);
+			this.registerAllStates(Material.RED_NETHER_BRICKS, Material.NETHER_BRICKS.createBlockData(), ProtocolVersionsHelper.DOWN_1_9_4);
+			this.registerAllStates(Material.MAGMA_BLOCK, Material.NETHERRACK.createBlockData(), ProtocolVersionsHelper.DOWN_1_9_4);
+			this.registerAllStates(Material.BONE_BLOCK, o -> {
 				Slab slab = (Slab) Material.STONE_SLAB.createBlockData();
 				slab.setType(Slab.Type.DOUBLE);
 				return slab;
-			}, ProtocolVersionsHelper.BEFORE_1_10);
+			}, ProtocolVersionsHelper.DOWN_1_9_4);
 
 
-			this.registerRemapEntryForAllStates(Material.END_GATEWAY, Material.END_PORTAL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(Material.END_ROD, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(Material.END_STONE_BRICKS, Material.END_STONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(Material.FROSTED_ICE, Material.ICE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(Material.GRASS_PATH, Material.FARMLAND.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(Material.STRUCTURE_BLOCK, Material.BEDROCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(Material.BEETROOTS, Material.POTATOES.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.<CommandBlock>registerRemapEntryForAllStates(
+			this.registerAllStates(Material.END_GATEWAY, Material.END_PORTAL.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(Material.END_ROD, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(Material.END_STONE_BRICKS, Material.END_STONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(Material.FROSTED_ICE, Material.ICE.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(Material.GRASS_PATH, Material.FARMLAND.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(Material.STRUCTURE_BLOCK, Material.BEDROCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(Material.BEETROOTS, Material.POTATOES.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.<CommandBlock>registerAllStates(
 				Arrays.asList(Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK, Material.REPEATING_COMMAND_BLOCK),
 				o -> {
 					CommandBlock data = (CommandBlock) Material.COMMAND_BLOCK.createBlockData();
 					data.setFacing(BlockFace.DOWN);
 					return data;
 				},
-				ProtocolVersionsHelper.BEFORE_1_9
+				ProtocolVersionsHelper.DOWN_1_8
 			);
-			this.registerRemapEntryForAllStates(Material.CHORUS_FLOWER, Material.OAK_WOOD.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntry(Material.CHORUS_PLANT.createBlockData(), Material.OAK_WOOD.createBlockData(), ProtocolVersionsHelper.BEFORE_1_9);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.CHORUS_FLOWER, Material.OAK_WOOD.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.register(Material.CHORUS_PLANT.createBlockData(), Material.OAK_WOOD.createBlockData(), ProtocolVersionsHelper.DOWN_1_8);
+			this.registerAllStates(
 				Arrays.asList(Material.PURPUR_PILLAR, Material.PURPUR_BLOCK),
 				Material.STONE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_9
+				ProtocolVersionsHelper.DOWN_1_8
 			);
-			this.withIgnoringDuplicateRemaps(() -> this.<Stairs>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Stairs>registerAllStates(
 				Material.PURPUR_STAIRS,
-				o -> toPre13StairsState(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_9
+				o -> toPreFlatteningStairs(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_8
 			));
-			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerAllStates(
 				Material.PURPUR_SLAB,
-				o -> toPre13SlabState(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_9
+				o -> toPreFlatteningSlab(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_8
 			));
 
 
-			this.registerRemapEntryForAllStates(Material.SLIME_BLOCK, Material.EMERALD_BLOCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.BARRIER, Material.GLASS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.PRISMARINE, Material.MOSSY_COBBLESTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.DARK_PRISMARINE, Material.MOSSY_COBBLESTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.PRISMARINE_BRICKS, Material.MOSSY_STONE_BRICKS.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.SEA_LANTERN, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.DAYLIGHT_DETECTOR, Material.DAYLIGHT_DETECTOR.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.withIgnoringDuplicateRemaps(() -> this.<TrapDoor>registerRemapEntryForAllStates(//not the best remap, but we have no choice
+			this.registerAllStates(Material.SLIME_BLOCK, Material.EMERALD_BLOCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.BARRIER, Material.GLASS.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.PRISMARINE, Material.MOSSY_COBBLESTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.DARK_PRISMARINE, Material.MOSSY_COBBLESTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.PRISMARINE_BRICKS, Material.MOSSY_STONE_BRICKS.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.SEA_LANTERN, Material.GLOWSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.DAYLIGHT_DETECTOR, Material.DAYLIGHT_DETECTOR.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.withIgnoringDuplicateRemaps(() -> this.<TrapDoor>registerAllStates(//not the best remap, but we have no choice
 				Material.IRON_TRAPDOOR,
-				o -> toPre13TrapDoor(o, (TrapDoor) Material.OAK_TRAPDOOR.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				o -> toPreFlatteningTrapDoor(o, (TrapDoor) Material.OAK_TRAPDOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_7_10
 			));
-			this.<Rotatable>registerRemapEntryForAllStates(
+			this.<Rotatable>registerAllStates(
 				Arrays.asList(
 					Material.BLACK_BANNER, Material.BLUE_BANNER, Material.BROWN_BANNER, Material.CYAN_BANNER,
 					Material.GRAY_BANNER, Material.GREEN_BANNER, Material.LIGHT_BLUE_BANNER, Material.LIGHT_GRAY_BANNER,
@@ -840,9 +1244,9 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_BANNER, Material.RED_BANNER, Material.WHITE_BANNER, Material.YELLOW_BANNER
 				),
 				o -> cloneRotatable(o, (Rotatable) Material.OAK_SIGN.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				ProtocolVersionsHelper.DOWN_1_7_10
 			);
-			this.<Directional>registerRemapEntryForAllStates(
+			this.<Directional>registerAllStates(
 				Arrays.asList(
 					Material.BLACK_WALL_BANNER, Material.BLUE_WALL_BANNER, Material.BROWN_WALL_BANNER, Material.CYAN_WALL_BANNER,
 					Material.GRAY_WALL_BANNER, Material.GREEN_WALL_BANNER, Material.LIGHT_BLUE_WALL_BANNER, Material.LIGHT_GRAY_WALL_BANNER,
@@ -850,70 +1254,70 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_WALL_BANNER, Material.RED_WALL_BANNER, Material.WHITE_WALL_BANNER, Material.YELLOW_WALL_BANNER
 				),
 				o -> cloneDirectional(o, (Directional) Material.OAK_WALL_SIGN.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				ProtocolVersionsHelper.DOWN_1_7_10
 			);
-			this.withIgnoringDuplicateRemaps(() -> this.<Gate>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Gate>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_FENCE_GATE, Material.DARK_OAK_FENCE_GATE, Material.BIRCH_FENCE_GATE,
 					Material.JUNGLE_FENCE_GATE, Material.OAK_FENCE_GATE, Material.SPRUCE_FENCE_GATE
 				),
-				o -> toPre13GateState(o, (Gate) Material.OAK_FENCE_GATE.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				o -> toPreFlatteningGate(o, (Gate) Material.OAK_FENCE_GATE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_7_10
 			));
-			this.registerRemapEntryForStates(
+			this.registerStates(
 				Arrays.asList(
 					Material.ACACIA_FENCE.createBlockData(), Material.DARK_OAK_FENCE.createBlockData(), Material.BIRCH_FENCE.createBlockData(),
 					Material.JUNGLE_FENCE.createBlockData(), Material.SPRUCE_FENCE.createBlockData(), Material.OAK_FENCE.createBlockData()
 				),
 				Material.OAK_FENCE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_8
+				ProtocolVersionsHelper.DOWN_1_7_10
 			);
-			this.withIgnoringDuplicateRemaps(() -> this.<Door>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Door>registerAllStates(
 				Arrays.asList(
 					Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.BIRCH_DOOR,
 					Material.JUNGLE_DOOR, Material.OAK_DOOR, Material.SPRUCE_DOOR
 				),
-				o -> toPre13DoorState(o, (Door) Material.OAK_DOOR.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				o -> toPreFlatteningDoor(o, (Door) Material.OAK_DOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_7_10
 			));
-			this.registerRemapEntryForAllStates(Material.RED_SAND, Material.SAND.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.RED_SANDSTONE, Material.SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.SMOOTH_RED_SANDSTONE, Material.SMOOTH_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.CHISELED_RED_SANDSTONE, Material.CHISELED_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.registerRemapEntryForAllStates(Material.CUT_RED_SANDSTONE, Material.CUT_SANDSTONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_8);
-			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerRemapEntryForAllStates(
+			this.registerAllStates(Material.RED_SAND, Material.SAND.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.RED_SANDSTONE, Material.SANDSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.SMOOTH_RED_SANDSTONE, Material.SMOOTH_SANDSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.CHISELED_RED_SANDSTONE, Material.CHISELED_SANDSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.registerAllStates(Material.CUT_RED_SANDSTONE, Material.CUT_SANDSTONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_7_10);
+			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerAllStates(
 				Material.RED_SANDSTONE_SLAB,
-				o -> toPre13SlabState(o, (Slab) Material.SANDSTONE_SLAB.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				o -> toPreFlatteningSlab(o, (Slab) Material.SANDSTONE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_7_10
 			));
-			this.withIgnoringDuplicateRemaps(() -> this.<Stairs>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Stairs>registerAllStates(
 				Material.RED_SANDSTONE_STAIRS,
-				o -> toPre13StairsState(o, (Stairs) Material.SANDSTONE_STAIRS.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_8
+				o -> toPreFlatteningStairs(o, (Stairs) Material.SANDSTONE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_7_10
 			));
 
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Material.TALL_GRASS,
 				Material.GRASS.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			);
-			this.registerRemapEntryForAllStates(Material.PACKED_ICE, Material.BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_7);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.PACKED_ICE, Material.BLUE_WOOL.createBlockData(), ProtocolVersionsHelper.DOWN_1_6_4);
+			this.registerAllStates(
 				Arrays.asList(Material.ACACIA_LOG, Material.DARK_OAK_LOG),
 				Material.OAK_LOG.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			);
-			this.withIgnoringDuplicateRemaps(() -> this.registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.registerAllStates(
 				Arrays.asList(Material.ACACIA_STAIRS, Material.DARK_OAK_STAIRS),
 				Material.OAK_STAIRS.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			));
-			this.withIgnoringDuplicateRemaps(() -> this.registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.registerAllStates(
 				Arrays.asList(Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES),
 				Material.OAK_LEAVES.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			));
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BLACK_STAINED_GLASS, Material.BLUE_STAINED_GLASS, Material.BROWN_STAINED_GLASS, Material.CYAN_STAINED_GLASS,
 					Material.GRAY_STAINED_GLASS, Material.GREEN_STAINED_GLASS, Material.LIGHT_BLUE_STAINED_GLASS, Material.LIGHT_GRAY_STAINED_GLASS,
@@ -921,9 +1325,9 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_STAINED_GLASS, Material.RED_STAINED_GLASS, Material.WHITE_STAINED_GLASS, Material.YELLOW_STAINED_GLASS
 				),
 				Material.GLASS.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			);
-			this.withIgnoringDuplicateRemaps(() -> this.registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.registerAllStates(
 				Arrays.asList(
 					Material.BLACK_STAINED_GLASS_PANE, Material.BLUE_STAINED_GLASS_PANE, Material.BROWN_STAINED_GLASS_PANE, Material.CYAN_STAINED_GLASS_PANE,
 					Material.GRAY_STAINED_GLASS_PANE, Material.GREEN_STAINED_GLASS_PANE, Material.LIGHT_BLUE_STAINED_GLASS_PANE, Material.LIGHT_GRAY_STAINED_GLASS_PANE,
@@ -931,22 +1335,22 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_STAINED_GLASS_PANE, Material.RED_STAINED_GLASS_PANE, Material.WHITE_STAINED_GLASS_PANE, Material.YELLOW_STAINED_GLASS_PANE
 				),
 				Material.GLASS_PANE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			));
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BLUE_ORCHID, Material.ALLIUM, Material.AZURE_BLUET, Material.RED_TULIP,
 					Material.ORANGE_TULIP, Material.WHITE_TULIP, Material.PINK_TULIP, Material.OXEYE_DAISY,
 					Material.SUNFLOWER, Material.LILAC, Material.ROSE_BUSH, Material.PEONY, Material.LARGE_FERN
 				),
 				Material.DANDELION.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_7
+				ProtocolVersionsHelper.DOWN_1_6_4
 			);
 
 
-			this.registerRemapEntryForAllStates(Material.HAY_BLOCK, Material.STONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_6);
-			this.registerRemapEntryForAllStates(Material.COAL_BLOCK, Material.OBSIDIAN.createBlockData(), ProtocolVersionsHelper.BEFORE_1_6);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(Material.HAY_BLOCK, Material.STONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_5_2);
+			this.registerAllStates(Material.COAL_BLOCK, Material.OBSIDIAN.createBlockData(), ProtocolVersionsHelper.DOWN_1_5_2);
+			this.registerAllStates(
 				Arrays.asList(
 					Material.BLACK_CARPET, Material.BLUE_CARPET, Material.BROWN_CARPET, Material.CYAN_CARPET,
 					Material.GRAY_CARPET, Material.GREEN_CARPET, Material.LIGHT_BLUE_CARPET, Material.LIGHT_GRAY_CARPET,
@@ -954,9 +1358,9 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_CARPET, Material.RED_CARPET, Material.WHITE_CARPET, Material.YELLOW_CARPET
 				),
 				Material.SNOW.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_6
+				ProtocolVersionsHelper.DOWN_1_5_2
 			);
-			this.registerRemapEntryForAllStates(
+			this.registerAllStates(
 				Arrays.asList(
 					Material.TERRACOTTA,
 					Material.BLACK_TERRACOTTA, Material.BLUE_TERRACOTTA, Material.BROWN_TERRACOTTA, Material.CYAN_TERRACOTTA,
@@ -965,50 +1369,50 @@ public class LegacyBlockDataMappingsGenerator {
 					Material.PURPLE_TERRACOTTA, Material.RED_TERRACOTTA, Material.WHITE_TERRACOTTA, Material.YELLOW_TERRACOTTA
 				),
 				Material.STONE.createBlockData(),
-				ProtocolVersionsHelper.BEFORE_1_6
+				ProtocolVersionsHelper.DOWN_1_5_2
 			);
 
 
-			this.registerRemapEntryForAllStates(Material.QUARTZ_BLOCK, Material.STONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_5);
-			this.registerRemapEntryForAllStates(Material.QUARTZ_PILLAR, Material.STONE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_5);
-			this.registerRemapEntryForAllStates(Material.NETHER_QUARTZ_ORE, Material.COAL_ORE.createBlockData(), ProtocolVersionsHelper.BEFORE_1_5);
-			this.registerRemapEntryForAllStates(Material.REDSTONE_BLOCK, Material.EMERALD_BLOCK.createBlockData(), ProtocolVersionsHelper.BEFORE_1_5);
-			this.registerRemapEntryForAllStates(Material.ACTIVATOR_RAIL, Material.DETECTOR_RAIL.createBlockData(), ProtocolVersionsHelper.BEFORE_1_5);
-			this.registerRemapEntry(Material.DAYLIGHT_DETECTOR.createBlockData(), Material.COBBLESTONE_SLAB.createBlockData(), ProtocolVersionsHelper.BEFORE_1_5);
-			this.<AnaloguePowerable>registerRemapEntryForAllStates(
+			this.registerAllStates(Material.QUARTZ_BLOCK, Material.STONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_4_7);
+			this.registerAllStates(Material.QUARTZ_PILLAR, Material.STONE.createBlockData(), ProtocolVersionsHelper.DOWN_1_4_7);
+			this.registerAllStates(Material.NETHER_QUARTZ_ORE, Material.COAL_ORE.createBlockData(), ProtocolVersionsHelper.DOWN_1_4_7);
+			this.registerAllStates(Material.REDSTONE_BLOCK, Material.EMERALD_BLOCK.createBlockData(), ProtocolVersionsHelper.DOWN_1_4_7);
+			this.registerAllStates(Material.ACTIVATOR_RAIL, Material.DETECTOR_RAIL.createBlockData(), ProtocolVersionsHelper.DOWN_1_4_7);
+			this.register(Material.DAYLIGHT_DETECTOR.createBlockData(), Material.COBBLESTONE_SLAB.createBlockData(), ProtocolVersionsHelper.DOWN_1_4_7);
+			this.<AnaloguePowerable>registerAllStates(
 				Arrays.asList(Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE),
 				o -> {
 					Powerable powerable = (Powerable) Material.STONE_PRESSURE_PLATE.createBlockData();
 					powerable.setPowered(o.getPower() == o.getMaximumPower());
 					return powerable;
-				}, ProtocolVersionsHelper.BEFORE_1_5
+				}, ProtocolVersionsHelper.DOWN_1_4_7
 			);
-			this.<Comparator>registerRemapEntryForAllStates(
+			this.<Comparator>registerAllStates(
 				Material.COMPARATOR,
 				o -> clonePowerable(o, (Repeater) Material.REPEATER.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_5
+				ProtocolVersionsHelper.DOWN_1_4_7
 			);
-			this.withIgnoringDuplicateRemaps(() -> this.<Stairs>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Stairs>registerAllStates(
 				Material.QUARTZ_STAIRS,
-				o -> toPre13StairsState(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_5
+				o -> toPreFlatteningStairs(o, (Stairs) Material.COBBLESTONE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_4_7
 			));
-			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Slab>registerAllStates(
 				Material.QUARTZ_SLAB,
-				o -> toPre13SlabState(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_5
+				o -> toPreFlatteningSlab(o, (Slab) Material.COBBLESTONE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_4_7
 			));
-			this.withIgnoringDuplicateRemaps(() -> this.<Directional>registerRemapEntryForAllStates(
+			this.withIgnoringDuplicateRemaps(() -> this.<Directional>registerAllStates(
 				Material.TRAPPED_CHEST,
-				o -> cloneDirectional(o, (Directional) Material.ENDER_CHEST.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_5
+				o -> cloneDirectional(o, (Directional) Material.CHEST.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_4_7
 			));
-			this.<Directional>registerRemapEntryForAllStates(
+			this.<Directional>registerAllStates(
 				Arrays.asList(Material.DROPPER, Material.HOPPER),
 				o -> cloneDirectional(o, (Directional) Material.FURNACE.createBlockData()),
-				ProtocolVersionsHelper.BEFORE_1_5
+				ProtocolVersionsHelper.DOWN_1_4_7
 			);
-
+      
 			this.registerRemapEntryForAllStates(Material.INFESTED_STONE, Material.STONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
 			this.registerRemapEntryForAllStates(Material.INFESTED_COBBLESTONE, Material.COBBLESTONE.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
 			this.registerRemapEntryForAllStates(Material.INFESTED_STONE_BRICKS, Material.BRICKS.createBlockData(), ProtocolVersion.MINECRAFT_BETA_1_7_3);
@@ -1133,7 +1537,7 @@ public class LegacyBlockDataMappingsGenerator {
 				ProtocolVersion.MINECRAFT_BETA_1_7_3
 			);
 
-			for (ProtocolVersion version : ProtocolVersionsHelper.BEFORE_1_15) {
+			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_15_2) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
 				LegacyTypeUtils.chainRemapTable(table, MinecraftData.BLOCKDATA_COUNT);
@@ -1142,7 +1546,7 @@ public class LegacyBlockDataMappingsGenerator {
 				if (version.isAfterOrEq(ProtocolVersion.MINECRAFT_1_13)) {
 					blockDataExistsFunc = id -> FlatteningBlockDataMappingsGenerator.REGISTRY.getTable(version).getRemap(id) != null;
 				} else if (version == ProtocolVersion.MINECRAFT_1_12) {
-					blockDataExistsFunc = id -> PreFlatteningBlockIdDataMappingsGenerator.getCombinedId(id) != -1;
+					blockDataExistsFunc = id -> PreFlatteningBlockIdDataMappingsGenerator.exists(id);
 				}
 
 				if (blockDataExistsFunc != null) {
@@ -1165,31 +1569,51 @@ public class LegacyBlockDataMappingsGenerator {
 			}
 		}
 
-		protected void registerRemapEntryForAllStates(List<Material> materials, BlockData to, ProtocolVersion... versions) {
+		protected void registerAllStates(List<Material> materials, BlockData to, ProtocolVersion... versions) {
 			for (Material material : materials) {
-				registerRemapEntryForAllStates(material, to, versions);
-			}
-		}
-
-		protected void registerRemapEntryForAllStates(Material from, BlockData to, ProtocolVersion... versions) {
-			MaterialAPI.getBlockDataList(from)
-			.forEach(blockdata -> registerRemapEntry(blockdata, to, versions));
-		}
-
-		protected <T extends BlockData> void registerRemapEntryForAllStates(List<Material> materials, Function<T, BlockData> remapFunc, ProtocolVersion... versions) {
-			for (Material material : materials) {
-				registerRemapEntryForAllStates(material, remapFunc, versions);
+				registerAllStates(material, to, versions);
 			}
 		}
 
 		@SuppressWarnings("unchecked")
-		protected <T extends BlockData> void registerRemapEntryForAllStates(Material from, Function<T, BlockData> remapFunc, ProtocolVersion... versions) {
-			MaterialAPI.getBlockDataList(from)
-			.forEach(blockdata -> registerRemapEntry(blockdata, remapFunc.apply((T) blockdata), versions));
+		protected <T extends BlockData> void registerSomeStates(Material from, Predicate<T> predicate, BlockData to, ProtocolVersion... versions) {
+			MaterialAPI.getBlockDataList(from).stream()
+			.filter((Predicate<? super BlockData>) predicate)
+			.forEach(blockdata -> register(blockdata, to, versions));
 		}
 
-		protected void registerRemapEntryForStates(List<BlockData> from, BlockData to, ProtocolVersion... versions) {
-			from.forEach(blockdata -> registerRemapEntry(blockdata, to, versions));
+		protected void registerAllStates(Material from, BlockData to, ProtocolVersion... versions) {
+			MaterialAPI.getBlockDataList(from)
+			.forEach(blockdata -> register(blockdata, to, versions));
+		}
+
+		protected <T extends BlockData> void registerSomeStates(List<Material> materials, Predicate<T> predicate, Function<T, BlockData> remapFunc, ProtocolVersion... versions) {
+			for (Material material : materials) {
+				registerSomeStates(material, predicate, remapFunc, versions);
+			}
+		}
+
+		protected <T extends BlockData> void registerAllStates(List<Material> materials, Function<T, BlockData> remapFunc, ProtocolVersion... versions) {
+			for (Material material : materials) {
+				registerAllStates(material, remapFunc, versions);
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		protected <T extends BlockData> void registerSomeStates(Material from, Predicate<T> predicate, Function<T, BlockData> remapFunc, ProtocolVersion... versions) {
+			MaterialAPI.getBlockDataList(from).stream()
+			.filter((Predicate<? super BlockData>) predicate)
+			.forEach(blockdata -> register(blockdata, remapFunc.apply((T) blockdata), versions));
+		}
+
+		@SuppressWarnings("unchecked")
+		protected <T extends BlockData> void registerAllStates(Material from, Function<T, BlockData> remapFunc, ProtocolVersion... versions) {
+			MaterialAPI.getBlockDataList(from)
+			.forEach(blockdata -> register(blockdata, remapFunc.apply((T) blockdata), versions));
+		}
+
+		protected void registerStates(List<BlockData> from, BlockData to, ProtocolVersion... versions) {
+			from.forEach(blockdata -> register(blockdata, to, versions));
 		}
 
 		boolean ignoreDuplicateRemaps = false;
@@ -1199,7 +1623,7 @@ public class LegacyBlockDataMappingsGenerator {
 			ignoreDuplicateRemaps = false;
 		}
 
-		protected void registerRemapEntry(BlockData from, BlockData to, ProtocolVersion... versions) {
+		protected void register(BlockData from, BlockData to, ProtocolVersion... versions) {
 			int fromId = MaterialAPI.getBlockDataNetworkId(from);
 			int toId = MaterialAPI.getBlockDataNetworkId(to);
 			if (!ignoreDuplicateRemaps) {
@@ -1216,7 +1640,7 @@ public class LegacyBlockDataMappingsGenerator {
 					}
 				}
 			}
-			registerRemapEntry(fromId, toId, versions);
+			register(fromId, toId, versions);
 		}
 
 		@Override

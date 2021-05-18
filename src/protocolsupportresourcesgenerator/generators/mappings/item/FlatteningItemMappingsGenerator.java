@@ -3,8 +3,6 @@ package protocolsupportresourcesgenerator.generators.mappings.item;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.bukkit.Material;
-
 import protocolsupportresourcesgenerator.generators.mappings.FlatteningResourceUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.Utils;
@@ -12,6 +10,7 @@ import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class FlatteningItemMappingsGenerator {
 
@@ -26,8 +25,21 @@ public class FlatteningItemMappingsGenerator {
 		}
 	};
 
+	protected static String upgradeMaterial(ProtocolVersion version, String material) {
+		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_15_2)) {
+			switch (material) {
+				case "minecraft:zombie_pigman_spawn_egg": {
+					return "minecraft:zombified_piglin_spawn_egg";
+				}
+			}
+		}
+		return material;
+	}
+
 	static {
-		FlatteningResourceUtils.loadMappingToRegistry("items.json", name -> MaterialAPI.getItemNetworkId(Material.matchMaterial(name)), REGISTRY);
+		FlatteningResourceUtils.loadMappingToRegistry(
+			"items.json", (version, name) -> MaterialAPI.getItemNetworkId(MaterialAPI.matchMaterial(upgradeMaterial(version, name))), REGISTRY
+		);
 	}
 
 	public static void writeMappings() throws IOException {

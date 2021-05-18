@@ -9,6 +9,7 @@ import protocolsupportresourcesgenerator.utils.Utils;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class FlatteningEntityDataGenerator {
 
@@ -25,8 +26,22 @@ public class FlatteningEntityDataGenerator {
 		}
 	};
 
+	protected static String upgradeEntityType(ProtocolVersion version, String name) {
+		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_15_2)) {
+			switch (name) {
+				case "zombie_pigman":
+				case "minecraft:zombie_pigman": {
+					return "minecraft:zombified_piglin";
+				}
+			}
+		}
+		return name;
+	}
+
 	static {
-		FlatteningResourceUtils.loadMappingToRegistry("entity_type.json", MaterialAPI::getEntityTypeNetworkId, REGISTRY);
+		FlatteningResourceUtils.loadMappingToRegistry(
+			"entity_type.json", (version, name) -> MaterialAPI.getEntityTypeNetworkId(upgradeEntityType(version, name)), REGISTRY
+		);
 	}
 
 	public static void writeMappings() throws IOException {

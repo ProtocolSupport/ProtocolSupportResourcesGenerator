@@ -8,16 +8,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import net.minecraft.server.v1_16_R3.IRegistry;
-import net.minecraft.server.v1_16_R3.SoundEffect;
+import net.minecraft.server.v1_16_R3.Item;
 
-public class SoundDataGenerator {
+public class ItemDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (SoundEffect soundeffect : IRegistry.SOUND_EVENT) {
-			rootObject.addProperty(String.valueOf(IRegistry.SOUND_EVENT.a(soundeffect)), IRegistry.SOUND_EVENT.getKey(soundeffect).getKey());
+		for (Item type : IRegistry.ITEM) {
+			rootObject.addProperty(IRegistry.ITEM.getKey(type).getKey(), IRegistry.ITEM.a(type));
 		}
-		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "sounds.json"))) {
+		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "item.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
 		}
 	}
