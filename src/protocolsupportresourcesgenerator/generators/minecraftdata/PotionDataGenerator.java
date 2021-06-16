@@ -7,15 +7,15 @@ import java.io.IOException;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_16_R3.IRegistry;
-import net.minecraft.server.v1_16_R3.MobEffectList;
+import net.minecraft.core.IRegistry;
+import net.minecraft.world.effect.MobEffectList;
 
 public class PotionDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (MobEffectList effect : IRegistry.MOB_EFFECT) {
-			rootObject.addProperty(String.valueOf(IRegistry.MOB_EFFECT.a(effect)), IRegistry.MOB_EFFECT.getKey(effect).getKey());
+		for (MobEffectList effect : IRegistry.V) {
+			rootObject.addProperty(String.valueOf(IRegistry.V.getId(effect)), IRegistry.V.getKey(effect).getKey());
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "potions.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);

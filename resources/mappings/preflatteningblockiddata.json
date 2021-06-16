@@ -3585,22 +3585,22 @@
     "legacydata": 7
   },
   {
-    "blockdata": "minecraft:cauldron[level=0]",
+    "blockdata": "minecraft:cauldron",
     "legacyid": 118,
     "legacydata": 0
   },
   {
-    "blockdata": "minecraft:cauldron[level=1]",
+    "blockdata": "minecraft:water_cauldron[level=1]",
     "legacyid": 118,
     "legacydata": 1
   },
   {
-    "blockdata": "minecraft:cauldron[level=2]",
+    "blockdata": "minecraft:water_cauldron[level=2]",
     "legacyid": 118,
     "legacydata": 2
   },
   {
-    "blockdata": "minecraft:cauldron[level=3]",
+    "blockdata": "minecraft:water_cauldron[level=3]",
     "legacyid": 118,
     "legacydata": 3
   },
@@ -6630,7 +6630,7 @@
     "legacydata": 3
   },
   {
-    "blockdata": "minecraft:grass_path",
+    "blockdata": "minecraft:dirt_path",
     "legacyid": 208,
     "legacydata": 0
   },

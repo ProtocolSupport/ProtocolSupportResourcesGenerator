@@ -10,10 +10,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.v1_16_R3.Block;
-import net.minecraft.server.v1_16_R3.IBlockData;
-import net.minecraft.server.v1_16_R3.IRegistry;
-import net.minecraft.server.v1_16_R3.SoundEffectType;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
 
@@ -30,18 +26,6 @@ public class BlockDataGenerator {
 				JsonObject blockdataObject = new JsonObject();
 				blockdataObject.addProperty("name", blockdata.getAsString());
 				blockdataObject.addProperty("network_id", MaterialAPI.getBlockDataNetworkId(blockdata));
-
-				int id = MaterialAPI.getBlockDataNetworkId(blockdata);
-				IBlockData nmsBlockData = Block.getByCombinedId(id);
-
-				JsonObject soundsObject = new JsonObject();
-				SoundEffectType sound = nmsBlockData.getBlock().getStepSound(nmsBlockData);
-				soundsObject.addProperty("break", IRegistry.SOUND_EVENT.a(sound.getBreakSound()));
-				soundsObject.addProperty("volume", sound.getVolume());
-				soundsObject.addProperty("pitch", sound.getPitch());
-
-				blockdataObject.add("sounds", soundsObject);
-
 				dataArray.add(blockdataObject);
 			}
 			blockObject.add("data", dataArray);

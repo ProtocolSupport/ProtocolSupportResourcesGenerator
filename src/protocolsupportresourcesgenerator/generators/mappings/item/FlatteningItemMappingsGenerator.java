@@ -26,6 +26,13 @@ public class FlatteningItemMappingsGenerator {
 	};
 
 	protected static String upgradeMaterial(ProtocolVersion version, String material) {
+		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_16_4)) {
+			switch (material) {
+				case "minecraft:grass_path": {
+					return "minecraft:dirt_path";
+				}
+			}
+		}
 		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_15_2)) {
 			switch (material) {
 				case "minecraft:zombie_pigman_spawn_egg": {

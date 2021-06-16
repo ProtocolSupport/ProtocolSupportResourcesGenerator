@@ -50,6 +50,23 @@ public class LegacyItemTypeMappingsGenerator {
 				});
 			});
 
+			register(Material.BUNDLE, Material.RABBIT_HIDE, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.AMETHYST_SHARD, Material.PRISMARINE_SHARD, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.RAW_COPPER, Material.IRON_ORE, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.RAW_IRON, Material.IRON_ORE, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.RAW_GOLD, Material.GOLD_ORE, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.COPPER_INGOT, Material.IRON_INGOT, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.SPYGLASS, Material.STICK, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.LIGHT, Material.TORCH, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.GLOW_ITEM_FRAME, Material.ITEM_FRAME, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.GLOW_INK_SAC, Material.INK_SAC, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.GLOW_BERRIES, Material.SWEET_BERRIES, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.POWDER_SNOW_BUCKET, Material.WATER_BUCKET, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.AXOLOTL_BUCKET, Material.COD_BUCKET, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.AXOLOTL_SPAWN_EGG, Material.SQUID_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.GLOW_SQUID_SPAWN_EGG, Material.SQUID_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_16_4);
+			register(Material.GOAT_SPAWN_EGG, Material.SHEEP_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_16_4);
+
 			register(Material.PIGLIN_BRUTE_SPAWN_EGG, Material.PIGLIN_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_16_1);
 
 			register(Material.NETHERITE_INGOT, Material.IRON_INGOT, ProtocolVersionsHelper.DOWN_1_15_2);
@@ -214,7 +231,7 @@ public class LegacyItemTypeMappingsGenerator {
 			register(Material.HOPPER_MINECART, Material.MINECART, ProtocolVersionsHelper.DOWN_1_4_7);
 			register(Material.NETHER_BRICK, Material.CLAY_BALL, ProtocolVersionsHelper.DOWN_1_4_7);
 
-			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_15_2) {
+			for (ProtocolVersion version : ProtocolVersionsHelper.DOWN_1_16_4) {
 				ArrayBasedIdRemappingTable table = getTable(version);
 
 				LegacyTypeUtils.chainRemapTable(table, MinecraftData.ITEM_COUNT);
@@ -250,30 +267,7 @@ public class LegacyItemTypeMappingsGenerator {
 			from.forEach(material -> register(material, to, versions));
 		}
 
-		boolean ignoreDuplicateRemaps = false;
-		protected void withIgnoringDuplicateRemaps(Runnable run) {
-			ignoreDuplicateRemaps = true;
-			run.run();
-			ignoreDuplicateRemaps = false;
-		}
-
 		protected void register(Material from, Material to, ProtocolVersion... versions) {
-			int fromId = MaterialAPI.getItemNetworkId(from);
-			int toId = MaterialAPI.getItemNetworkId(to);
-			if (!ignoreDuplicateRemaps) {
-				for (ProtocolVersion version : versions) {
-					int remappedId = getTable(version).getRemap(fromId);
-					if (remappedId != fromId) {
-						System.err.println(MessageFormat.format(
-							"[Warning] Version {0}: item {1} remap is already set to {2} (Now set to {3})",
-							version,
-							MaterialAPI.getItemByNetworkId(fromId),
-							MaterialAPI.getItemByNetworkId(remappedId),
-							MaterialAPI.getItemByNetworkId(toId)
-						));
-					}
-				}
-			}
 			register(MaterialAPI.getItemNetworkId(from), MaterialAPI.getItemNetworkId(to), versions);
 		}
 

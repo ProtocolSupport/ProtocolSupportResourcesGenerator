@@ -1,6 +1,5 @@
 package protocolsupportresourcesgenerator.generators.mappings;
 
-import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.function.ToIntBiFunction;
 
@@ -16,7 +15,7 @@ import protocolsupportresourcesgenerator.version.ProtocolVersion;
 public class FlatteningResourceUtils {
 
 	public static void loadMappingToRegistry(String filename, ToIntBiFunction<ProtocolVersion, String> toIntFunc, IdRemappingRegistry<ArrayBasedIdRemappingTable> registry) {
-		Arrays.stream(ProtocolVersion.getAllSupported()).forEach(version -> {
+		for (ProtocolVersion version : ProtocolVersion.getAllSupported()) {
 			JsonObject rootObject = ResourceUtils.getAsJson(ResourceUtils.getFlatteningResoucePath(version, filename));
 			if (rootObject != null) {
 				ArrayBasedIdRemappingTable table = registry.getTable(version);
@@ -24,7 +23,7 @@ public class FlatteningResourceUtils {
 					table.setRemap(toIntFunc.applyAsInt(version, entry.getKey()), JsonUtils.getInt(entry.getValue().getAsJsonObject(), "protocol_id"));
 				}
 			}
-		});
+		}
 	}
 
 	public static JsonObject generateJsonMappingsFromRegistry(IdRemappingRegistry<ArrayBasedIdRemappingTable> registry, int tableSize) {

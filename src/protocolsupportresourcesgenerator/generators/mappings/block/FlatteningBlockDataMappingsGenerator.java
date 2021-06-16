@@ -36,6 +36,20 @@ public class FlatteningBlockDataMappingsGenerator {
 	};
 
 	protected static Map.Entry<String, Map<String, String>> upgradeBlockData(ProtocolVersion version, String name, Map<String, String> properties) {
+		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_16_4)) {
+			switch (name) {
+				case "minecraft:cauldron": {
+					if (Integer.parseInt(properties.get("level")) >= 1) {
+						return new AbstractMap.SimpleEntry<>("minecraft:water_cauldron", properties);
+					} else {
+						return new AbstractMap.SimpleEntry<>("minecraft:cauldron", Collections.emptyMap());
+					}
+				}
+				case "minecraft:grass_path": {
+					return new AbstractMap.SimpleEntry<>("minecraft:dirt_path", properties);
+				}
+			}
+		}
 		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_15_2)) {
 			switch (name) {
 				case "minecraft:cobblestone_wall":

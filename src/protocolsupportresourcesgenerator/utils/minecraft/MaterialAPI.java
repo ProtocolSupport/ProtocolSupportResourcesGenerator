@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_16_R3.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_16_R3.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
 
-import net.minecraft.server.v1_16_R3.Block;
-import net.minecraft.server.v1_16_R3.EntityTypes;
-import net.minecraft.server.v1_16_R3.IRegistry;
+import net.minecraft.core.IRegistry;
+import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.block.Block;
 
 public class MaterialAPI {
 
@@ -54,11 +54,11 @@ public class MaterialAPI {
 		if (!material.isBlock()) {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not a block", material));
 		}
-		return IRegistry.BLOCK.a(CraftMagicNumbers.getBlock(material));
+		return IRegistry.W.getId(CraftMagicNumbers.getBlock(material));
 	}
 
 	public static Material getBlockByNetworkId(int id) {
-		return CraftMagicNumbers.getMaterial(IRegistry.BLOCK.fromId(id));
+		return CraftMagicNumbers.getMaterial(IRegistry.W.fromId(id));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -69,11 +69,11 @@ public class MaterialAPI {
 		if (!material.isItem()) {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not an item", material));
 		}
-		return IRegistry.ITEM.a(CraftMagicNumbers.getItem(material));
+		return IRegistry.Z.getId(CraftMagicNumbers.getItem(material));
 	}
 
 	public static Material getItemByNetworkId(int id) {
-		return CraftMagicNumbers.getMaterial(IRegistry.ITEM.fromId(id));
+		return CraftMagicNumbers.getMaterial(IRegistry.Z.fromId(id));
 	}
 
 	public static int getEntityTypeNetworkId(String name) {
@@ -81,7 +81,7 @@ public class MaterialAPI {
 		if (!type.isPresent()) {
 			throw new IllegalArgumentException(MessageFormat.format("Entity type {0} doesn''t exist", name));
 		}
-		return IRegistry.ENTITY_TYPE.a(type.get());
+		return IRegistry.Y.getId(type.get());
 	}
 
 }
