@@ -22,6 +22,8 @@ import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
 
 import net.minecraft.server.MinecraftServer;
+import protocolsupportresourcesgenerator.generators.locale.LocaleListGenerator;
+import protocolsupportresourcesgenerator.generators.locale.LocaleDataGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.FlatteningBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.LegacyBlockDataMappingsGenerator;
 import protocolsupportresourcesgenerator.generators.mappings.block.PreFlatteningBlockIdDataMappingsGenerator;
@@ -46,6 +48,9 @@ public class EntryPoint {
 
 	public static void main(String[] args) {
 		try {
+			LocaleDataGenerator.writeData();
+			LocaleListGenerator.writeData();
+
 			startServer();
 
 			PreFlatteningBlockIdDataMappingsGenerator.writeMappings();
