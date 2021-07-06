@@ -1,13 +1,12 @@
 package protocolsupportresourcesgenerator.generators.locale;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
-
-import org.jline.utils.InputStreamReader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
