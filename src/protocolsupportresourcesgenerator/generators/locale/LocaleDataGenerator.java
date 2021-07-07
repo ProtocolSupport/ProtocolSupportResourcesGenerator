@@ -16,8 +16,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import protocolsupportresourcesgenerator.utils.JsonUtils;
+import protocolsupportresourcesgenerator.utils.ResourceUtils;
 import protocolsupportresourcesgenerator.utils.Utils;
-import protocolsupportresourcesgenerator.utils.minecraft.ResourceUtils;
 
 public class LocaleDataGenerator {
 

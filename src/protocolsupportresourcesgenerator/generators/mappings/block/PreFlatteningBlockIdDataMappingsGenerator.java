@@ -18,9 +18,9 @@ import com.google.gson.JsonObject;
 
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
+import protocolsupportresourcesgenerator.utils.ResourceUtils;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
-import protocolsupportresourcesgenerator.utils.minecraft.ResourceUtils;
 
 @SuppressWarnings("deprecation")
 public class PreFlatteningBlockIdDataMappingsGenerator {

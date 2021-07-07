@@ -1,8 +1,6 @@
-package protocolsupportresourcesgenerator.utils.minecraft;
+package protocolsupportresourcesgenerator.utils;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -11,19 +9,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import protocolsupportresourcesgenerator.utils.Utils;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class ResourceUtils {
 
-	static final String resourcesDirName = "resources";
-
 	public static InputStream getAsStream(String name) {
-		try {
-			return new FileInputStream(resourcesDirName + "/" + name);
-		} catch (FileNotFoundException e) {
-			return null;
-		}
+		return ResourceUtils.class.getClassLoader().getResourceAsStream(name);
 	}
 
 	public static BufferedReader getAsBufferedReader(String name) {

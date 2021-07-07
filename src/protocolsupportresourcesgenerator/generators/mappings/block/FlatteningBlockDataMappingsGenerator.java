@@ -19,9 +19,9 @@ import com.google.gson.JsonObject;
 
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.JsonUtils;
+import protocolsupportresourcesgenerator.utils.ResourceUtils;
 import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
-import protocolsupportresourcesgenerator.utils.minecraft.ResourceUtils;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;

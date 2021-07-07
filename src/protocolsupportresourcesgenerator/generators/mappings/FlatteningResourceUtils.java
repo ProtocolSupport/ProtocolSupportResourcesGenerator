@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import protocolsupportresourcesgenerator.utils.JsonUtils;
-import protocolsupportresourcesgenerator.utils.minecraft.ResourceUtils;
+import protocolsupportresourcesgenerator.utils.ResourceUtils;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
