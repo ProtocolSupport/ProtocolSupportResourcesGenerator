@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_17_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R1.util.CraftMagicNumbers;
 
 import net.minecraft.core.IRegistry;
 import net.minecraft.world.entity.EntityTypes;
@@ -33,17 +33,17 @@ public class MaterialAPI {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not a block", material));
 		}
 		return
-			(List<T>) CraftMagicNumbers.getBlock(material).getStates().a().stream()
+			(List<T>) CraftMagicNumbers.getBlock(material).m().a().stream()
 			.map(CraftBlockData::fromData)
 			.collect(Collectors.toList());
 	}
 
 	public static int getBlockDataNetworkId(BlockData blockdata) {
-		return Block.getCombinedId(((CraftBlockData) blockdata).getState());
+		return Block.i(((CraftBlockData) blockdata).getState());
 	}
 
 	public static BlockData getBlockDataByNetworkId(int id) {
-		return CraftBlockData.fromData(Block.getByCombinedId(id));
+		return CraftBlockData.fromData(Block.a(id));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -54,11 +54,11 @@ public class MaterialAPI {
 		if (!material.isBlock()) {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not a block", material));
 		}
-		return IRegistry.W.getId(CraftMagicNumbers.getBlock(material));
+		return IRegistry.X.a(CraftMagicNumbers.getBlock(material));
 	}
 
 	public static Material getBlockByNetworkId(int id) {
-		return CraftMagicNumbers.getMaterial(IRegistry.W.fromId(id));
+		return CraftMagicNumbers.getMaterial(IRegistry.X.a(id));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -69,11 +69,11 @@ public class MaterialAPI {
 		if (!material.isItem()) {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not an item", material));
 		}
-		return IRegistry.Z.getId(CraftMagicNumbers.getItem(material));
+		return IRegistry.aa.a(CraftMagicNumbers.getItem(material));
 	}
 
 	public static Material getItemByNetworkId(int id) {
-		return CraftMagicNumbers.getMaterial(IRegistry.Z.fromId(id));
+		return CraftMagicNumbers.getMaterial(IRegistry.aa.a(id));
 	}
 
 	public static int getEntityTypeNetworkId(String name) {
@@ -81,7 +81,7 @@ public class MaterialAPI {
 		if (!type.isPresent()) {
 			throw new IllegalArgumentException(MessageFormat.format("Entity type {0} doesn''t exist", name));
 		}
-		return IRegistry.Y.getId(type.get());
+		return IRegistry.Z.a(type.get());
 	}
 
 }

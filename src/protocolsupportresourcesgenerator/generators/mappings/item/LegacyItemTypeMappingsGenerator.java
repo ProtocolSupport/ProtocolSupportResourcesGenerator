@@ -50,6 +50,8 @@ public class LegacyItemTypeMappingsGenerator {
 				});
 			});
 
+			register(Material.MUSIC_DISC_OTHERSIDE, Material.MUSIC_DISC_BLOCKS, ProtocolVersionsHelper.DOWN_1_17_1);
+
 			register(Material.BUNDLE, Material.RABBIT_HIDE, ProtocolVersionsHelper.DOWN_1_16_4);
 			register(Material.AMETHYST_SHARD, Material.PRISMARINE_SHARD, ProtocolVersionsHelper.DOWN_1_16_4);
 			register(Material.RAW_COPPER, Material.IRON_ORE, ProtocolVersionsHelper.DOWN_1_16_4);

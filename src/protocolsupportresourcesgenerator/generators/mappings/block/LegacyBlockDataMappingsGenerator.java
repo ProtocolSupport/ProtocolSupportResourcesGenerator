@@ -71,7 +71,7 @@ import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.Wall.Height;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.craftbukkit.v1_17_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;

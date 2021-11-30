@@ -4,13 +4,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import net.minecraft.core.IRegistry;
-import net.minecraft.resources.MinecraftKey;
 import protocolsupportresourcesgenerator.generators.mappings.FlatteningResourceUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.Utils;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
+import protocolsupportresourcesgenerator.utils.minecraft.MinecraftRegistryUtils;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
+import protocolsupportresourcesgenerator.version.ProtocolVersion;
 
 public class FlatteningParticleMappingsGenerator {
 
@@ -27,8 +28,24 @@ public class FlatteningParticleMappingsGenerator {
 		}
 	};
 
+	protected static String upgradeParticleType(ProtocolVersion version, String type) {
+		if (version.isBeforeOrEq(ProtocolVersion.MINECRAFT_1_17_1)) {
+			switch (type) {
+				case "barrier":
+				case "minecraft:barrier":
+				case "light":
+				case "minecraft:light": {
+					return "minecraft:block_marker";
+				}
+			}
+		}
+		return type;
+	}
+
 	static {
-		FlatteningResourceUtils.loadMappingToRegistry("particles.json", (version, name) -> IRegistry.ab.getId(IRegistry.ab.get(MinecraftKey.a(name))), REGISTRY);
+		FlatteningResourceUtils.loadMappingToRegistry(
+			"particles.json", (version, name) -> MinecraftRegistryUtils.getIdByKey(IRegistry.ac, upgradeParticleType(version, name)), REGISTRY
+		);
 	}
 
 	public static void writeMappings() throws IOException {
