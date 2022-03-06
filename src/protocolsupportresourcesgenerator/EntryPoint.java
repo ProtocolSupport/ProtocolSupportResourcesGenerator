@@ -38,6 +38,7 @@ import protocolsupportresourcesgenerator.generators.minecraftdata.ItemDataGenera
 import protocolsupportresourcesgenerator.generators.minecraftdata.ParticleDataGenerator;
 import protocolsupportresourcesgenerator.generators.minecraftdata.PotionDataGenerator;
 import protocolsupportresourcesgenerator.generators.minecraftdata.SoundDataGenerator;
+import protocolsupportresourcesgenerator.generators.minecraftdata.TileEntityDataGenerator;
 
 public class EntryPoint {
 
@@ -66,6 +67,7 @@ public class EntryPoint {
 			FlatteningParticleMappingsGenerator.writeMappings();
 
 			BlockDataGenerator.writeData();
+			TileEntityDataGenerator.writeData();
 			ItemDataGenerator.writeData();
 			EntityDataGenerator.writeData();
 			SoundDataGenerator.writeData();
