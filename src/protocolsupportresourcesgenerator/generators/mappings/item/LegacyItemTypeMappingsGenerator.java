@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.IntFunction;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import com.google.gson.GsonBuilder;
@@ -248,13 +249,13 @@ public class LegacyItemTypeMappingsGenerator {
 				if (itemTypeExistsFunc != null) {
 					LegacyTypeUtils.checkTable(
 						table, MinecraftData.ITEM_COUNT, itemTypeExistsFunc,
-						(originalId, remappedId) -> System.err.println(MessageFormat.format(
+						(originalId, remappedId) -> Bukkit.getLogger().warning(MessageFormat.format(
 							"[Warning] Version {0}: item {1} is mapped to {2}, but it exists at this version",
 							version,
 							MaterialAPI.getItemByNetworkId(originalId),
 							MaterialAPI.getItemByNetworkId(remappedId)
 						)),
-						(originalId, remappedId) -> System.err.println(MessageFormat.format(
+						(originalId, remappedId) -> Bukkit.getLogger().warning(MessageFormat.format(
 							"[Error] Version {0}: item {1} is mapped to {2}, which doesn''t exist at this version",
 							version,
 							MaterialAPI.getItemByNetworkId(originalId),

@@ -12,6 +12,7 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
 import org.bukkit.Axis;
+import org.bukkit.Bukkit;
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -71,7 +72,7 @@ import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.Wall.Height;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.craftbukkit.v1_18_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -1797,13 +1798,13 @@ public class LegacyBlockDataMappingsGenerator {
 				if (blockDataExistsFunc != null) {
 					LegacyTypeUtils.checkTable(
 						table, MinecraftData.BLOCKDATA_COUNT, blockDataExistsFunc,
-						(originalId, remappedId) -> System.err.println(MessageFormat.format(
+						(originalId, remappedId) -> Bukkit.getLogger().warning(MessageFormat.format(
 							"[Warning] Version {0}: blockdata {1} is mapped to {2}, but it exists at this version",
 							version,
 							MaterialAPI.getBlockDataByNetworkId(originalId).getAsString(),
 							MaterialAPI.getBlockDataByNetworkId(remappedId).getAsString()
 						)),
-						(originalId, remappedId) -> System.err.println(MessageFormat.format(
+						(originalId, remappedId) -> Bukkit.getLogger().warning(MessageFormat.format(
 							"[Error] Version {0}: blockdata {1} is mapped to {2}, which doesn''t exist at this version",
 							version,
 							MaterialAPI.getBlockDataByNetworkId(originalId).getAsString(),

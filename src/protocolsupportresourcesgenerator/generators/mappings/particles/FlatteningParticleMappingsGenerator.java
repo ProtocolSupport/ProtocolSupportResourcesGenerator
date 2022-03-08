@@ -44,7 +44,7 @@ public class FlatteningParticleMappingsGenerator {
 
 	static {
 		FlatteningResourceUtils.loadMappingToRegistry(
-			"particles.json", (version, name) -> MinecraftRegistryUtils.getIdByKey(IRegistry.ac, upgradeParticleType(version, name)), REGISTRY
+			"particles.json", (version, name) -> MinecraftRegistryUtils.getIdByKey(IRegistry.Z, upgradeParticleType(version, name)), REGISTRY
 		);
 	}
 

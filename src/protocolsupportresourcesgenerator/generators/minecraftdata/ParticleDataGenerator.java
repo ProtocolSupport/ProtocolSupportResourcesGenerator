@@ -14,8 +14,8 @@ public class ParticleDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (Particle<?> type : IRegistry.ac) {
-			rootObject.addProperty(IRegistry.ac.b(type).a(), IRegistry.ac.a(type));
+		for (Particle<?> type : IRegistry.Z) {
+			rootObject.addProperty(IRegistry.Z.b(type).a(), IRegistry.Z.a(type));
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "particle.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);
