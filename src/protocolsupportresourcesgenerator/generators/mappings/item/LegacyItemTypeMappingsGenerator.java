@@ -51,6 +51,26 @@ public class LegacyItemTypeMappingsGenerator {
 				});
 			});
 
+			register(Material.MANGROVE_BOAT, Material.SPRUCE_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.MANGROVE_CHEST_BOAT, Material.SPRUCE_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.OAK_CHEST_BOAT, Material.OAK_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.SPRUCE_CHEST_BOAT, Material.SPRUCE_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.BIRCH_CHEST_BOAT, Material.BIRCH_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.JUNGLE_CHEST_BOAT, Material.JUNGLE_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.ACACIA_CHEST_BOAT, Material.ACACIA_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.DARK_OAK_CHEST_BOAT, Material.OAK_CHEST_BOAT, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.FROGSPAWN, Material.MOSS_CARPET, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.MUSIC_DISC_5, Material.MUSIC_DISC_11, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.DISC_FRAGMENT_5, Material.MUSIC_DISC_11, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.RECOVERY_COMPASS, Material.COMPASS, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.ECHO_SHARD, Material.PRISMARINE_SHARD, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.GOAT_HORN, Material.TRIPWIRE_HOOK, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.TADPOLE_BUCKET, Material.TROPICAL_FISH_BUCKET, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.WARDEN_SPAWN_EGG, Material.ELDER_GUARDIAN_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.TADPOLE_SPAWN_EGG, Material.TROPICAL_FISH_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.FROG_SPAWN_EGG, Material.TROPICAL_FISH_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_18_2);
+			register(Material.ALLAY_SPAWN_EGG, Material.BAT_SPAWN_EGG, ProtocolVersionsHelper.DOWN_1_18_2);
+
 			register(Material.MUSIC_DISC_OTHERSIDE, Material.MUSIC_DISC_BLOCKS, ProtocolVersionsHelper.DOWN_1_17_1);
 
 			register(Material.BUNDLE, Material.RABBIT_HIDE, ProtocolVersionsHelper.DOWN_1_16_4);

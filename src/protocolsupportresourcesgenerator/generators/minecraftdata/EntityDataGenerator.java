@@ -14,8 +14,8 @@ public class EntityDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (EntityTypes<?> type : IRegistry.W) {
-			rootObject.addProperty(IRegistry.W.b(type).a(), IRegistry.W.a(type));
+		for (EntityTypes<?> type : IRegistry.X) {
+			rootObject.addProperty(IRegistry.X.b(type).a(), IRegistry.X.a(type));
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "entity.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);

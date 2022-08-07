@@ -49,6 +49,7 @@ import org.bukkit.block.data.type.Dripleaf;
 import org.bukkit.block.data.type.Fence;
 import org.bukkit.block.data.type.Fire;
 import org.bukkit.block.data.type.Gate;
+import org.bukkit.block.data.type.GlowLichen;
 import org.bukkit.block.data.type.Jigsaw;
 import org.bukkit.block.data.type.Lantern;
 import org.bukkit.block.data.type.Leaves;
@@ -59,8 +60,11 @@ import org.bukkit.block.data.type.PointedDripstone;
 import org.bukkit.block.data.type.RedstoneRail;
 import org.bukkit.block.data.type.RedstoneWire;
 import org.bukkit.block.data.type.Repeater;
+import org.bukkit.block.data.type.Sapling;
 import org.bukkit.block.data.type.Scaffolding;
 import org.bukkit.block.data.type.SculkSensor;
+import org.bukkit.block.data.type.SculkShrieker;
+import org.bukkit.block.data.type.SculkVein;
 import org.bukkit.block.data.type.Sign;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.SmallDripleaf;
@@ -72,7 +76,7 @@ import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.Wall;
 import org.bukkit.block.data.type.Wall.Height;
 import org.bukkit.block.data.type.WallSign;
-import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -344,9 +348,181 @@ public class LegacyBlockDataMappingsGenerator {
 			return to;
 		}
 
+		protected Leaves cloneLeaves(Leaves from, Leaves to) {
+			cloneWaterlogged(from, to);
+			to.setPersistent(from.isPersistent());
+			to.setDistance(from.getDistance());
+			return to;
+		}
+
+		protected Sapling cloneSapling(Sapling from, Sapling to) {
+			to.setStage(Math.min(from.getStage(), to.getMaximumStage()));
+			return to;
+		}
+
 
 		public void applyDefaultRemaps() {
 			clear();
+
+			this.registerAllStates(
+				Arrays.asList(Material.OCHRE_FROGLIGHT, Material.PEARLESCENT_FROGLIGHT, Material.VERDANT_FROGLIGHT),
+				Material.SEA_LANTERN.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(Material.FROGSPAWN, Material.AIR.createBlockData(), ProtocolVersionsHelper.DOWN_1_18_2);
+			this.<Orientable>registerAllStates(
+				Material.MANGROVE_LOG,
+				o -> cloneOrientable(o, (Orientable) Material.SPRUCE_LOG.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Orientable>registerAllStates(
+				Material.STRIPPED_MANGROVE_LOG,
+				o -> cloneOrientable(o, (Orientable) Material.STRIPPED_SPRUCE_LOG.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Orientable>registerAllStates(
+				Material.MANGROVE_WOOD,
+				o -> cloneOrientable(o, (Orientable) Material.SPRUCE_WOOD.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Orientable>registerAllStates(
+				Material.STRIPPED_MANGROVE_WOOD,
+				o -> cloneOrientable(o, (Orientable) Material.STRIPPED_SPRUCE_WOOD.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(
+				Material.MANGROVE_PLANKS,
+				Material.SPRUCE_PLANKS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Sapling>registerAllStates(
+				Material.MANGROVE_PROPAGULE,
+				o -> cloneSapling(o, (Sapling) Material.SPRUCE_SAPLING.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(Material.POTTED_MANGROVE_PROPAGULE, Material.POTTED_SPRUCE_SAPLING.createBlockData(), ProtocolVersionsHelper.DOWN_1_18_2);
+			this.<Stairs>registerAllStates(
+				Material.MANGROVE_STAIRS,
+				o -> cloneStairs(o, (Stairs) Material.SPRUCE_STAIRS.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Slab>registerAllStates(
+				Material.MANGROVE_SLAB,
+				o -> cloneSlab(o, (Slab) Material.SPRUCE_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Fence>registerAllStates(
+				Material.MANGROVE_FENCE,
+				o -> cloneFence(o, (Fence) Material.SPRUCE_FENCE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Gate>registerAllStates(
+				Material.MANGROVE_FENCE_GATE,
+				o -> cloneGate(o, (Gate) Material.SPRUCE_FENCE_GATE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Door>registerAllStates(
+				Material.MANGROVE_DOOR,
+				o -> cloneDoor(o, (Door) Material.SPRUCE_DOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<TrapDoor>registerAllStates(
+				Material.MANGROVE_TRAPDOOR,
+				o -> cloneTrapDoor(o, (TrapDoor) Material.SPRUCE_TRAPDOOR.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Sign>registerAllStates(
+				Material.MANGROVE_SIGN,
+				o -> cloneSign(o, (Sign) Material.SPRUCE_SIGN.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<WallSign>registerAllStates(
+				Material.MANGROVE_WALL_SIGN,
+				o -> cloneWallSign(o, (WallSign) Material.SPRUCE_WALL_SIGN.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Powerable>registerAllStates(
+				Material.MANGROVE_PRESSURE_PLATE,
+				o -> clonePowerable(o, (Powerable) Material.SPRUCE_PRESSURE_PLATE.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Switch>registerAllStates(
+				Material.MANGROVE_BUTTON,
+				o -> cloneSwitch(o, (Switch) Material.SPRUCE_BUTTON.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Leaves>registerAllStates(
+				Material.MANGROVE_LEAVES,
+				o -> cloneLeaves(o, (Leaves) Material.SPRUCE_LEAVES.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(
+				Material.MANGROVE_ROOTS,
+				o -> Material.SPRUCE_LEAVES.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(
+				Arrays.asList(Material.MUD, Material.MUDDY_MANGROVE_ROOTS),
+				o -> Material.COARSE_DIRT.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(
+				Material.PACKED_MUD,
+				o -> Material.COBBLESTONE.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(
+				Material.MUD_BRICKS,
+				o -> Material.STONE_BRICKS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Stairs>registerAllStates(
+				Material.MUD_BRICK_STAIRS,
+				o -> Material.STONE_BRICK_STAIRS.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Slab>registerAllStates(
+				Material.MUD_BRICK_SLAB,
+				o -> Material.STONE_BRICK_SLAB.createBlockData(),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Wall>registerAllStates(
+				Material.MUD_BRICK_WALL,
+				o -> cloneWall(o, (Wall) Material.COBBLESTONE_WALL.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<Leaves>registerAllStates(
+				Arrays.asList(
+					Material.ACACIA_LEAVES, Material.DARK_OAK_LEAVES, Material.BIRCH_LEAVES,
+					Material.JUNGLE_LEAVES, Material.SPRUCE_LEAVES, Material.OAK_LEAVES,
+					Material.AZALEA_LEAVES, Material.DARK_OAK_LEAVES, Material.FLOWERING_AZALEA_LEAVES
+				),
+				o -> {
+					Leaves leaves = (Leaves) o.getMaterial().createBlockData();
+					cloneLeaves(o, leaves);
+					leaves.setWaterlogged(false);
+					return leaves;
+				},
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(Material.SCULK, Material.BLACK_CONCRETE_POWDER.createBlockData(), ProtocolVersionsHelper.DOWN_1_18_2);
+			this.<SculkVein>registerAllStates(
+				Material.SCULK_VEIN,
+				o -> {
+					GlowLichen glowlichen = (GlowLichen) Material.GLOW_LICHEN.createBlockData();
+					cloneMultipleFacting(o, glowlichen);
+					cloneWaterlogged(o, glowlichen);
+					return glowlichen;
+				},
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.<SculkShrieker>registerAllStates(
+				Material.SCULK_SHRIEKER,
+				o -> cloneWaterlogged(o, (Waterlogged) Material.PRISMARINE_BRICK_SLAB.createBlockData()),
+				ProtocolVersionsHelper.DOWN_1_18_2
+			);
+			this.registerAllStates(Material.SCULK_CATALYST, Material.PRISMARINE_BRICKS.createBlockData(), ProtocolVersionsHelper.DOWN_1_18_2);
+			this.registerAllStates(Material.REINFORCED_DEEPSLATE, Material.OBSIDIAN.createBlockData(), ProtocolVersionsHelper.DOWN_1_18_2);
 
 			this.<Levelled>registerAllStates(
 				Material.POWDER_SNOW_CAULDRON,

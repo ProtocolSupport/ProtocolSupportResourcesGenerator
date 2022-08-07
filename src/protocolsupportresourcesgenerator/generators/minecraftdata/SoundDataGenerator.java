@@ -14,8 +14,8 @@ public class SoundDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (SoundEffect soundeffect : IRegistry.R) {
-			rootObject.addProperty(String.valueOf(IRegistry.R.a(soundeffect)), IRegistry.R.b(soundeffect).a());
+		for (SoundEffect soundeffect : IRegistry.S) {
+			rootObject.addProperty(String.valueOf(IRegistry.S.a(soundeffect)), IRegistry.S.b(soundeffect).a());
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "sounds.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);

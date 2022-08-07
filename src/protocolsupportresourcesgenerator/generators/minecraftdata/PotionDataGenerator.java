@@ -14,8 +14,8 @@ public class PotionDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (MobEffectList effect : IRegistry.T) {
-			rootObject.addProperty(String.valueOf(IRegistry.T.a(effect)), IRegistry.T.b(effect).a());
+		for (MobEffectList effect : IRegistry.U) {
+			rootObject.addProperty(String.valueOf(IRegistry.U.a(effect)), IRegistry.U.b(effect).a());
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "potions.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);

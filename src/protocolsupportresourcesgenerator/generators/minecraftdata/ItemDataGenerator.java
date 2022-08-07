@@ -14,8 +14,8 @@ public class ItemDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (Item type : IRegistry.X) {
-			rootObject.addProperty(IRegistry.X.b(type).a(), IRegistry.X.a(type));
+		for (Item type : IRegistry.Y) {
+			rootObject.addProperty(IRegistry.Y.b(type).a(), IRegistry.Y.a(type));
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "item.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);

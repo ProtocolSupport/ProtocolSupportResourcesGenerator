@@ -1,0 +1,128 @@
+plugins {
+	id 'java'
+	id 'io.github.shevchik.ManualGradleDependencySupplier' version '3.1'
+	id 'application'
+}
+
+
+gradle.startParameter.showStacktrace = org.gradle.api.logging.configuration.ShowStacktrace.ALWAYS
+
+
+defaultTasks 'build'
+
+
+group 'protocolsupport'
+version '1.19-1-dev'
+
+
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption;
+
+import io.github.shevchik.manualgradledependencysupplier.ManualGradleDependencySupplier
+import io.github.shevchik.manualgradledependencysupplier.DependencySupplier
+import io.github.shevchik.manualgradledependencysupplier.BuildDependencySupplier
+import io.github.shevchik.manualgradledependencysupplier.UnpackZipFileDependencySupplier
+import io.github.shevchik.manualgradledependencysupplier.FilterZipFileDependencySupplier
+
+
+Path projectDirectoryPath = projectDir.toPath().toAbsolutePath()
+Path projectBuildDirectoryPath = getBuildDir().toPath()
+Path runDirectoryPath = projectDirectoryPath.resolve('run')
+
+task setupFolders(type: DefaultTask) {doLast{
+	Files.createDirectories(runDirectoryPath)
+}}
+
+sourceCompatibility = JavaVersion.VERSION_17
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src']
+		}
+		resources {
+			srcDirs = ['resources']
+		}
+	}
+	test {
+		java {
+			srcDirs = ['tests']
+		}
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven {
+		url 'https://oss.sonatype.org/content/repositories/snapshots/'
+	}
+	maven {
+		url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+	}
+	maven {
+		url 'https://papermc.io/repo/repository/maven-public/'
+	}
+	maven {
+		url 'https://libraries.minecraft.net/'
+	}
+	maven {
+		url 'https://jitpack.io'
+	}
+}
+
+dependencies {
+	Path spigotBuildDirectoryPath = projectBuildDirectoryPath.resolve('spigot-1.19.2')
+
+	DependencySupplier spigotDependencySupplier = new UnpackZipFileDependencySupplier(
+		new BuildDependencySupplier(
+			new URL('https://hub.spigotmc.org/jenkins/job/BuildTools/148/artifact/target/BuildTools.jar'),
+			spigotBuildDirectoryPath,
+			'BuildTools.jar',
+			['java', '-jar', 'BuildTools.jar', '--rev', '1.19.2'],
+			['spigot-1.19.2.jar']
+		).setBuildEnv([
+			'MAVEN_OPTS': '-Dmaven.repo.local=' + spigotBuildDirectoryPath.resolve('mrepo').toString() + ' -Xmx1024M'
+		]),
+		'META-INF/versions/spigot-1.19.2-R0.1-SNAPSHOT.jar',
+		spigotBuildDirectoryPath,
+		'spigot-1.19.2-real.jar'
+	)
+
+	implementation group: 'org.spigotmc', name: 'spigot-api', version: '1.19.2-R0.1-SNAPSHOT'
+	implementation ManualGradleDependencySupplier.supplyDependecies([
+		spigotDependencySupplier
+	])
+	implementation group: 'com.mojang', name: 'authlib', version: '3.5.41'
+	implementation group: 'com.mojang', name: 'brigadier', version: '1.0.18'
+	implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.6'
+	implementation group: 'io.netty', name: 'netty-all', version: '4.1.77.Final'
+	implementation group: 'com.mojang', name: 'authlib', version: '3.5.41'
+	implementation group: 'com.mojang', name: 'brigadier', version: '1.0.18'
+	implementation group: 'com.mojang', name: 'datafixerupper', version: '5.0.28'
+	implementation group: 'com.mojang', name: 'javabridge', version: '1.2.24'
+	implementation group: 'com.mojang', name: 'logging', version: '1.0.0'
+	implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j', version: '2.17.0', ext: 'pom'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.0'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-iostreams', version: '2.17.0'
+	implementation group: 'net.sf.jopt-simple', name: 'jopt-simple', version: '5.0.4'
+	implementation group: 'jline', name: 'jline', version: '2.12.1'
+	implementation group: 'com.github.oshi', name: 'oshi-core', version: '5.8.5'
+}
+
+compileJava {
+	options.encoding = 'UTF-8'
+	options.incremental = false
+}
+
+application {
+    mainClassName = 'protocolsupportresourcesgenerator.EntryPoint'
+}
+
+tasks.run.workingDir = runDirectoryPath
+
+compileJava.dependsOn(setupFolders)
+jar.enabled = false
+jar.finalizedBy(run)

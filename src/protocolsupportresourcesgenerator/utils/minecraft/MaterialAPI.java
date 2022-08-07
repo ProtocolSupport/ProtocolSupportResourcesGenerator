@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.v1_18_R2.block.data.CraftBlockData;
-import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_19_R1.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.v1_19_R1.util.CraftMagicNumbers;
 
 import net.minecraft.core.IRegistry;
 import net.minecraft.world.entity.EntityTypes;
@@ -33,7 +33,7 @@ public class MaterialAPI {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not a block", material));
 		}
 		return
-			(List<T>) CraftMagicNumbers.getBlock(material).m().a().stream()
+			(List<T>) CraftMagicNumbers.getBlock(material).k().a().stream()
 			.map(CraftBlockData::fromData)
 			.collect(Collectors.toList());
 	}
@@ -54,11 +54,11 @@ public class MaterialAPI {
 		if (!material.isBlock()) {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not a block", material));
 		}
-		return IRegistry.U.a(CraftMagicNumbers.getBlock(material));
+		return IRegistry.V.a(CraftMagicNumbers.getBlock(material));
 	}
 
 	public static Material getBlockByNetworkId(int id) {
-		return CraftMagicNumbers.getMaterial(IRegistry.X.a(id));
+		return CraftMagicNumbers.getMaterial(IRegistry.V.a(id));
 	}
 
 	@SuppressWarnings("deprecation")
@@ -69,11 +69,11 @@ public class MaterialAPI {
 		if (!material.isItem()) {
 			throw new IllegalArgumentException(MessageFormat.format("Material {0} is not an item", material));
 		}
-		return IRegistry.X.a(CraftMagicNumbers.getItem(material));
+		return IRegistry.Y.a(CraftMagicNumbers.getItem(material));
 	}
 
 	public static Material getItemByNetworkId(int id) {
-		return CraftMagicNumbers.getMaterial(IRegistry.X.a(id));
+		return CraftMagicNumbers.getMaterial(IRegistry.Y.a(id));
 	}
 
 	public static int getEntityTypeNetworkId(String name) {
@@ -81,7 +81,7 @@ public class MaterialAPI {
 		if (!type.isPresent()) {
 			throw new IllegalArgumentException(MessageFormat.format("Entity type {0} doesn''t exist", name));
 		}
-		return IRegistry.W.a(type.get());
+		return IRegistry.X.a(type.get());
 	}
 
 }

@@ -14,8 +14,8 @@ public class TileEntityDataGenerator {
 
 	public static void writeData() throws IOException {
 		JsonObject rootObject = new JsonObject();
-		for (TileEntityTypes<?> type : IRegistry.aa) {
-			rootObject.addProperty(IRegistry.aa.b(type).a(), IRegistry.aa.a(type));
+		for (TileEntityTypes<?> type : IRegistry.ab) {
+			rootObject.addProperty(IRegistry.ab.b(type).a(), IRegistry.ab.a(type));
 		}
 		try (FileWriter writer = new FileWriter(new File(DataGeneratorConstants.targetFolder, "tile.json"))) {
 			new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(rootObject, writer);

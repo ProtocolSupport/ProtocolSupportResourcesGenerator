@@ -1,12 +1,7 @@
 # Build Folders #
-bin/
-build/
-target/
-gen/
-libraries_runtime/
-libraries_shade/
-build_libraries/
-logs/
+/bin/
+/build/
+/run/
 
 # Gradle
 .gradle
@@ -27,24 +22,3 @@ logs/
 .idea/
 *.iml
 
-
-# Server files
-/banned-ips.json
-/banned-players.json
-/bukkit.yml
-/commands.yml
-/crash-reports/
-/help.yml
-/ops.json
-/permissions.yml
-/plugins/
-/server.properties
-/spigot.yml
-/usercache.json
-/whitelist.json
-/world/
-/world_nether/
-/world_the_end/
-/eula.txt
-/paper.yml
-/version_history.json

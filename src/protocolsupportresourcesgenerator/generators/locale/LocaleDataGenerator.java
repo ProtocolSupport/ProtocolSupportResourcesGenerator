@@ -27,7 +27,7 @@ public class LocaleDataGenerator {
 		try (Writer writer = LocaleGeneratorConstants.createBufferedWriter("en_us.json")) {
 			gson.toJson(enusLangJson, writer);
 		}
-		for (Map.Entry<String, JsonElement> assetEntry : JsonUtils.getJsonObject(readJsonObject("https://launchermeta.mojang.com/v1/packages/7fcda714d4a391a711ce434fa1dbbebe73ecf179/1.18.json"), "objects").entrySet()) {
+		for (Map.Entry<String, JsonElement> assetEntry : JsonUtils.getJsonObject(readJsonObject("https://piston-meta.mojang.com/v1/packages/4f4d42f50fe8ba9b5d0d4ae63993c71b46df7622/1.19.json"), "objects").entrySet()) {
 			String name = assetEntry.getKey();
 			if (!name.startsWith("minecraft/lang/")) {
 				continue;
