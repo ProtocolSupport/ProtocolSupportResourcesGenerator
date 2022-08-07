@@ -84,4 +84,8 @@ public class MaterialAPI {
 		return IRegistry.X.a(type.get());
 	}
 
+	public static int getParticleTypeNetworkId(String name) {
+		return MinecraftRegistryUtils.getIdByKey(IRegistry.aa, name);
+	}
+
 }

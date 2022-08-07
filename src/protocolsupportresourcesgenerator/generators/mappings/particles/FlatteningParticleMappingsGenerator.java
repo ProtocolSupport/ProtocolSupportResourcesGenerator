@@ -3,12 +3,11 @@ package protocolsupportresourcesgenerator.generators.mappings.particles;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import net.minecraft.core.IRegistry;
 import protocolsupportresourcesgenerator.generators.mappings.FlatteningResourceUtils;
 import protocolsupportresourcesgenerator.generators.mappings.MappingsGeneratorConstants;
 import protocolsupportresourcesgenerator.utils.Utils;
+import protocolsupportresourcesgenerator.utils.minecraft.MaterialAPI;
 import protocolsupportresourcesgenerator.utils.minecraft.MinecraftData;
-import protocolsupportresourcesgenerator.utils.minecraft.MinecraftRegistryUtils;
 import protocolsupportresourcesgenerator.utils.registry.RemappingRegistry.IdRemappingRegistry;
 import protocolsupportresourcesgenerator.utils.registry.RemappingTable.ArrayBasedIdRemappingTable;
 import protocolsupportresourcesgenerator.version.ProtocolVersion;
@@ -44,7 +43,7 @@ public class FlatteningParticleMappingsGenerator {
 
 	static {
 		FlatteningResourceUtils.loadMappingToRegistry(
-			"particles.json", (version, name) -> MinecraftRegistryUtils.getIdByKey(IRegistry.Z, upgradeParticleType(version, name)), REGISTRY
+			"particles.json", (version, name) -> MaterialAPI.getParticleTypeNetworkId(upgradeParticleType(version, name)), REGISTRY
 		);
 	}
 
